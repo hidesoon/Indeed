@@ -67,6 +67,9 @@ Making a Search:
 	# get important words from a raw html file
 	indeed.get_important_words(html)
 
+	# get bigram version of pool of words
+	indeed.bigramify(words)
+
 	# will soon add ability to see num of search results for same query across cities
 
 Automating the search process and getting the data in a good format for analysis:
@@ -99,7 +102,7 @@ Automating the search process and getting the data in a good format for analysis
 	p.words() # ranked list of words -- separate from counts
 	# can add different Process objects, if locations are the same, can add to pool via dump function
 	# if locations are different will just pool the pools for access to other functions
-	q = Process(("Java","e"))
+	q = indeed.Process(("Java","e"))
 	q.dump()
 	c = p+q
 	c.dump()
