@@ -1,4 +1,4 @@
-Interface and search for jobs in indeed.com, collect data on employers, find out what their needs are.
+Collect data on employers, find out what their needs are, etc.
 
 This project is currently under development, feel free to poke around and use what there is though.
 
