@@ -36,23 +36,18 @@ class Search:
         if "+" in terms[0]:
             self.term_search = terms[0].lower()
         else:
-            for s in terms[0]:
-                if s == " ":
-                    self.term_search += "+"
-                else:
-                    self.term_search += s.lower()
+            term = terms[0].replace(" ", "+")
+            self.term_search = term.lower()
+
 
         # format location in url
         if "+" in loc:
             self.loc = loc
         else:
-            for s in loc:
-                if s == " ":
-                    self.loc += "+"
-                elif s == ",":
-                    self.loc += "%2C"
-                else:
-                    self.loc += s    
+            loc = loc.replace(" ", "+")
+            loc = loc.replace(",", "%2C")
+            self.loc = loc
+   
 
         # look for whether exact or inexact criteria
         check_term = terms[1].lower()
@@ -279,9 +274,8 @@ class Process(Search):
         except socket.timeout:
             print "Connection timed out, skipping to next url."
             return self.continue_dump(q, rec = True)
-        finally:
-            print "Something happened, not sure what ... skipping to next url."
-            return self.continue_dump(q, rec = True) 
+        #finally:
+           # return self.continue_dump(q, rec = True) 
     
     def dump(self, q = 'all',rec = False):
         if q is 'all':
@@ -499,6 +493,11 @@ class Process(Search):
 #                                                                              #
 #                                                                              #
 ##########################             oo              #########################
+
+
+
+
+
 
 
 # Analysis class --> Maybe should be external to this: allows analysis of data from other sources
