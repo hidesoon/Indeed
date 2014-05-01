@@ -1,0 +1,18 @@
+>>> s = p.pool_summary(print_out=True)
+>>> s1 = p.pool_summary(print_out=True,with_filter=True)
+>>> s2 = p.pool_summary(print_out=True,lower=True)
+>>> s3 = p.pool_summary(print_out=True,lower=True,with_filter=True)
+>>> f = open("test.txt","w")
+>>> f.write(s)
+>>> f.close()
+>>> f = open("test1.txt","w")
+>>> f.write(s1)
+>>> f.close()
+>>> f = open("test2.txt","w")
+>>> f.write(s2)
+>>> f.close()
+>>> f = open("test3.txt","w")
+>>> f.write(s3)
+>>> f.close()
+>>> 
+
