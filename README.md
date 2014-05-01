@@ -1,6 +1,6 @@
-Collect data on employers, find out what their needs are, etc.
-
 This project is currently under development, feel free to poke around and use what there is though.
+
+
 
 
 
@@ -92,6 +92,7 @@ Automating the search process and getting the data in a good format for analysis
 	p.pool_summary(pos = True) # includes part of speech tags in data
 	p.pool_summary(log_freqs = True) # includes log freqs
 	p.pool_summary(with_filter = True) # applies strong stopword filter
+	p.pool_summary(lower = True)  # lower a bunch of words to reduce spread
 	p.pool_summary(with_bigrams = True) # adjusts pool to bigram, can't use pos option with this
 
 	p.counts() # sorted list of counts -- separate from word 
