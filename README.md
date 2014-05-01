@@ -55,7 +55,7 @@ Making a Search:
 	 
 
 
-	# Non-class functions which may be useful randomly
+Non-class functions which may be useful randomly
 
 	indeed.clean_html(html_file)
 
