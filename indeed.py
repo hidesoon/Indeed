@@ -275,12 +275,12 @@ class Process(Search):
             return data
         except urllib2.URLError:
             print "Bad url, skipping to next url."
-            self.continue_dump(q, rec = True)
+            return self.continue_dump(q, rec = True)
         except socket.timeout:
             print "Connection timed out, skipping to next url."
-            self.continue_dump(q, rec = True)
+            return self.continue_dump(q, rec = True)
         finally:
-            self.continue_dump(q, rec = True) 
+            return self.continue_dump(q, rec = True) 
     
     def dump(self, q = 'all',rec = False):
         if q is 'all':
@@ -302,7 +302,8 @@ class Process(Search):
     def continue_dump(self, q = "all", rec = False):
         self.job_urls = self.backup_job_urls[self.count+1:]
         self.job_htmls = (get_html(url) for url in self.job_urls) 
-        self.dump(q, rec)
+        d = self.dump(q, rec)
+        if rec: return d
 
     # pool manipulations, may want to adjust pool to particular purpose before storing
     def see_pool(self):
