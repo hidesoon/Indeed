@@ -130,14 +130,13 @@ class Search:
     def next(self):
         if self.count is None:
             self.count = 1
-        else:
-            self.count += 1
         try:
-            print self.count
             data = self.job_htmls.next()
+            print self.count
+            self.count += 1
             return data
         except StopIteration:
-            return None
+            return 
 
     
     def raw_employer_data(self):
