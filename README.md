@@ -57,17 +57,20 @@ Making a Search:
 
 Non-class functions which may be useful randomly
 
-	indeed.clean_html(html_file)
 
-	indeed.get_html(url)
 
+	html_file = indeed.get_html(url)
+	
+	cleaned_file = indeed.clean_html(html_file)
+	
 	# remove unimportant words in a string using nltk stopwords
 	indeed.remove_stopwords(string,language="english")
 
 	# get important words from a raw html file
-	indeed.get_important_words(html)
+	# uses previous two directly
+	indeed.get_important_words(html_file)
 
-	# get bigram version of pool of words
+	# get bigram version of pool of words in 1D list
 	indeed.bigramify(words)
 
 	# will soon add ability to see num of search results for same query across cities
