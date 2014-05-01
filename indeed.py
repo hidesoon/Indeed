@@ -246,7 +246,7 @@ class Process(Search):
             new_loc = self.loc
 
         new_max_results = max([self.max_per_page, other.max_per_page])
-        new_pages = max([self.pages,other.pages])
+        new_pages = max([self.pages, other.pages])
         # create new instance
         n = Process((self.term_search + "+" + other.term_search, new_e_ne), loc = new_loc, num_res = new_max_results, pages = new_pages, sleep = self.sleep)
 
@@ -275,36 +275,34 @@ class Process(Search):
             return data
         except urllib2.URLError:
             print "Bad url, skipping to next url."
-            self.continue_dump(q)
-            return None
+            self.continue_dump(q, rec = True)
         except socket.timeout:
             print "Connection timed out, skipping to next url."
-            self.continue_dump(q)
-            return None  
+            self.continue_dump(q, rec = True)
         finally:
-            self.continue_dump(q) 
-            return None
+            self.continue_dump(q, rec = True) 
     
-    def dump(self, q = 'all'):
+    def dump(self, q = 'all',rec = False):
         if q is 'all':
             # huge dump into the pool 
             data = self.raw_employer_data()
+            if rec: return data
             while data is not None:
                 # might want to include options for identifying information on data by data basis, might need a dict with {indeed url : cleaned html}
                 data = self.__pool_data(data, q)
-        else:
-            if type(q) is not int:
-                raise TypeError, ("Pass the number of results you want in the pool.")
+        elif type(q) is int:
             data = self.raw_employer_data()
+            if rec: return data
             while self.count < q and data is not None:
                 data = self.__pool_data(data, q)
 
+
         self.pool_safe = self.pool
     
-    def continue_dump(self, q = "all"):
+    def continue_dump(self, q = "all", rec = False):
         self.job_urls = self.backup_job_urls[self.count+1:]
         self.job_htmls = (get_html(url) for url in self.job_urls) 
-        self.dump(q)
+        self.dump(q, rec)
 
     # pool manipulations, may want to adjust pool to particular purpose before storing
     def see_pool(self):
