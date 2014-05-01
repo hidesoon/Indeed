@@ -92,6 +92,8 @@ Automating the search process and getting the data in a good format for analysis
 	p.pool_summary(pos = True) # includes part of speech tags in data
 	p.pool_summary(log_freqs = True) # includes log freqs
 	p.pool_summary(with_filter = True) # applies strong stopword filter
+	p.pool_summary(with_bigrams = True) # adjusts pool to bigram, can't use pos option with this
+
 	p.counts() # sorted list of counts -- separate from word 
 	p.words() # ranked list of words -- separate from counts
 	# can add different Process objects, if locations are the same, can add to pool via dump function

@@ -390,7 +390,7 @@ class Process(Search):
 
                             # returning a string if you must store results in txt file -> interface with db would be better
     # rename to just 'summary' ?               #the log freq of ea word, the part of speech of ea. word
-    def pool_summary(self, print_out = False, log_freqs = False, pos = False, with_filter = False, lower = False):
+    def pool_summary(self, print_out = False, log_freqs = False, pos = False, with_filter = False, lower = False, with_bigrams = False):
         # self.summary = {"Total_Words" : N , (nth, "Word_Count") : [(word1,count1),(word2,count2),(word3,count3)...(wordn,countn)] }
         # very primitive summary for all the words
         # the most basic (all params False) stores word : wordCount in self.summary.
@@ -404,6 +404,11 @@ class Process(Search):
             self.lower_pool(protected = nnps)
             self.pool_summary(print_out, log_freqs, pos, with_filter, False)
 
+        if with_bigrams:
+            #  note that using pos option doesn't make sense here.
+            self.bigramify()
+            self.summary = {"Total_Words":0, ("Word", "Word_Count"):[]}
+            self.summary_header_bool = (False, False)            
         total_words = len(self.pool)
         new_summary_header_bool = (log_freqs, pos)
         h = self.__trans_header(self.summary_header_bool)
@@ -480,7 +485,8 @@ class Process(Search):
 
     # would be good to look for and store bigrams, maybe ngrams in general? Probably not. 
 
- 
+    def bigramify(self):
+        self.pool = [(self.pool[idx], self.pool[idx+1]) for idx in range(len(self.pool[:-1]))]
     """
         option: strict -> use large stopwords list to remove even more words.
         option: store -> as csv, in db
