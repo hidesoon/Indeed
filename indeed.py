@@ -192,6 +192,8 @@ def get_important_words(html):
     de_stop_worded_data = filter(lambda l: l != [],[remove_stopwords(sentence.strip()) for sentence in data_list])
     return de_stop_worded_data
 
+def bigramify(pool):
+    return [(pool[idx], pool[idx+1]) for idx in range(len(pool[:-1]))]
 # would be neat to be able to see num results across several cities?
 #########################       Process  class       #########################
 #                                                                            #
@@ -401,7 +403,7 @@ class Process(Search):
 
         if with_bigrams:
             #  note that using pos option doesn't make sense here. ---- unless I make the pos able to be tupled too
-            self.bigramify()
+            self.pool = bigramify(self.pool)
             self.summary = {"Total_Words":0, ("Word", "Word_Count"):[]}
             self.summary_header_bool = (False, False)   
 
@@ -481,8 +483,7 @@ class Process(Search):
 
     # would be good to look for and store bigrams, maybe ngrams in general? Probably not. 
 
-    def bigramify(self):
-        self.pool = [(self.pool[idx], self.pool[idx+1]) for idx in range(len(self.pool[:-1]))]
+
     """
         option: strict -> use large stopwords list to remove even more words.
         option: store -> as csv, in db
