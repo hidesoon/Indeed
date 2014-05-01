@@ -280,6 +280,7 @@ class Process(Search):
             print "Connection timed out, skipping to next url."
             return self.continue_dump(q, rec = True)
         finally:
+            print "Something happened, not sure what ... skipping to next url."
             return self.continue_dump(q, rec = True) 
     
     def dump(self, q = 'all',rec = False):
@@ -405,10 +406,11 @@ class Process(Search):
             self.pool_summary(print_out, log_freqs, pos, with_filter, False)
 
         if with_bigrams:
-            #  note that using pos option doesn't make sense here.
+            #  note that using pos option doesn't make sense here. ---- unless I make the pos able to be tupled too
             self.bigramify()
             self.summary = {"Total_Words":0, ("Word", "Word_Count"):[]}
-            self.summary_header_bool = (False, False)            
+            self.summary_header_bool = (False, False)   
+
         total_words = len(self.pool)
         new_summary_header_bool = (log_freqs, pos)
         h = self.__trans_header(self.summary_header_bool)
