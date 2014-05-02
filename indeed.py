@@ -386,6 +386,10 @@ class Process(Search):
         # self.summary = {"Total_Words" : N , (nth, "Word_Count") : [(word1,count1),(word2,count2),(word3,count3)...(wordn,countn)] }
         # very primitive summary for all the words
         # the most basic (all params False) stores word : wordCount in self.summary.
+        if with_bigrams is False and type(self.pool[0]) is tuple:
+            self.restore_pool()
+            self.pool_summary(print_out,log_freqs,pos,with_filter,lower)
+        
         if with_filter:
             self.filter_stopwords(stopwords.Capital_words)
             self.filter_stopwords(stopwords.Lower_words)
@@ -400,9 +404,7 @@ class Process(Search):
             #  note that using pos option doesn't make sense here. ---- unless I make the pos able to be tupled too
             self.pool = bigramify(self.pool)
             self.reset_summary()   
-        elif with_bigrams is False and type(self.pool[0]) is tuple:
-            self.restore_pool()
-            self.pool_summary(print_out,log_freqs,pos,with_filter,lower)
+
 
         total_words = len(self.pool)
         new_summary_header_bool = (log_freqs, pos)
