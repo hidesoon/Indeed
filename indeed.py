@@ -7,6 +7,7 @@ try:
     import nltk
 except ImportError:
      print "Sorry, I need nltk to work at the moment. "
+
 #Native
 import urllib2, re, os, collections, math, random, time, socket
 # import threading
@@ -20,7 +21,6 @@ class Search:
     # pass "e" for exact search or "ne" for not exact search. 
     #                          # default because num results probably low ...and it's funny?
     def __init__(self, terms=("data+scientist","e"), loc = "Austin%2C+TX", num_res = 100, pages = 1):
-
         self.term_search = ""
         self.e_ne = ""
         self.loc = ""
@@ -31,14 +31,13 @@ class Search:
         self.pages = pages
         # counter for times next is called on generator
         self.count = None
+
         # format search term for url
-      
         if "+" in terms[0]:
             self.term_search = terms[0].lower()
         else:
             term = terms[0].replace(" ", "+")
             self.term_search = term.lower()
-
 
         # format location in url
         if "+" in loc:
@@ -48,7 +47,6 @@ class Search:
             loc = loc.replace(",", "%2C")
             self.loc = loc
    
-
         # look for whether exact or inexact criteria
         check_term = terms[1].lower()
         if check_term == "e":
@@ -150,9 +148,7 @@ class Search:
         if self.count is not None:
             return self.job_urls[self.count-1]"""
 
-
     # Should be able to have user specify a list of words they think are important and should be looking for
-
 
 #########################    END OF "Search" CLASS     #########################
 #                                                                              #
@@ -211,8 +207,10 @@ class Process(Search):
         self.default_stopwords = set(nltk.corpus.stopwords.words('english'))
 
         self.sleep = sleep
+        
         # words will swim in here linearly
         self.pool = []
+        
         # revert to original pool
         self.pool_safe = []
 
@@ -292,7 +290,6 @@ class Process(Search):
             while self.count < q and data is not None:
                 data = self.__pool_data(data, q)
 
-
         self.pool_safe = self.pool
     
     def continue_dump(self, q = "all", rec = False):
@@ -329,8 +326,7 @@ class Process(Search):
             self.pool = out   """
         else:
             self.pool = [word.lower() for word in self.pool]
-        self.summary = {"Total_Words":0, ("Word", "Word_Count"):[]}
-        self.summary_header_bool = (False, False)
+        self.reset_summary()
     # pass True if you want to use lower case pool for analysis
     def tag_pool(self):
         self.pos_set = nltk.pos_tag(list(set(self.pool)))
@@ -341,8 +337,7 @@ class Process(Search):
             words = self.default_stopwords
         words = set(words)
         self.pool = [w for w in self.pool if w not in words]
-        self.summary = {"Total_Words":0, ("Word", "Word_Count"):[]}
-        self.summary_header_bool = (False, False)
+        self.reset_summary()
     
     def identify_NNP(self, with_counts = False):
         #returns ranked NNPs -- good enough?
@@ -383,7 +378,6 @@ class Process(Search):
         elif tup_h == (True, True):
             return ("Word", "Word_Count", "Log_Freqs", "POS_Tag") 
 
-
                             # returning a string if you must store results in txt file -> interface with db would be better
     # rename to just 'summary' ?               #the log freq of ea word, the part of speech of ea. word
     def pool_summary(self, print_out = False, log_freqs = False, pos = False, with_filter = False, lower = False, with_bigrams = False):
@@ -403,8 +397,11 @@ class Process(Search):
         if with_bigrams:
             #  note that using pos option doesn't make sense here. ---- unless I make the pos able to be tupled too
             self.pool = bigramify(self.pool)
-            self.summary = {"Total_Words":0, ("Word", "Word_Count"):[]}
-            self.summary_header_bool = (False, False)   
+            self.reset_summary()   
+        elif with_bigrams is False and self.pool[0] is tuple:
+            self.restore_pool()
+            self.pool_summary(print_out, log_freqs, pos, with_filter, lower, False)
+
 
         total_words = len(self.pool)
         new_summary_header_bool = (log_freqs, pos)
@@ -454,9 +451,13 @@ class Process(Search):
     def summary_data(self):
         return self.summary
 
+    def reset_summary(self):
+        self.summary = {"Total_Words":0, ("Word", "Word_Count"):[]}
+        self.summary_header_bool = (False, False)         
     # every pool needs a safety floatation device
     def restore_pool(self):
         self.pool = self.pool_safe
+        self.reset_summary()
         # may be better to store counted version instead of entire pool
     
     """
@@ -480,14 +481,11 @@ class Process(Search):
         words = [t[0] for t in data]
         return words
 
-    # would be good to look for and store bigrams, maybe ngrams in general? Probably not. 
-
-
     """
-        option: strict -> use large stopwords list to remove even more words.
-        option: store -> as csv, in db
-        option: correlation m. 
-        option: 
+    option: strict -> use large stopwords list to remove even more words.
+    option: store -> as csv or in db
+    option: correlation m. 
+    option: 
     """
 #########################    END OF "Process" CLASS     ########################
 #                                                                              #
@@ -496,15 +494,9 @@ class Process(Search):
 
 
 
-
-
-
-
 # Analysis class --> Maybe should be external to this: allows analysis of data from other sources
 
-# Database interface, etc.
+# Database interface
 # Once database built, would be good to have python look to see if indeed job url has been searched before (recently) and use that data rather than getting it again
 # 
-#
-#
 #
