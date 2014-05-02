@@ -394,22 +394,18 @@ class Process(Search):
             self.lower_pool(protected = nnps)
             self.pool_summary(print_out, log_freqs, pos, with_filter, False)
 
-        if with_bigrams:
+        if with_bigrams is True and type(self.pool[0]) is not tuple:
             #  note that using pos option doesn't make sense here. ---- unless I make the pos able to be tupled too
             self.pool = bigramify(self.pool)
             self.reset_summary()   
-        elif with_bigrams is False and self.pool[0] is tuple:
+        elif with_bigrams is False and type(self.pool[0]) is tuple:
             self.restore_pool()
-            self.reset_summary()
-            self.pool_summary(print_out, log_freqs, pos, with_filter, lower, False)
-
 
         total_words = len(self.pool)
         new_summary_header_bool = (log_freqs, pos)
         h = self.__trans_header(self.summary_header_bool)
         new_h = self.__trans_header(new_summary_header_bool)
         pre_data = self.summary[h]
-
 
         if pre_data == []:
             """
