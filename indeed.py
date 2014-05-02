@@ -329,7 +329,9 @@ class Process(Search):
         self.reset_summary()
     # pass True if you want to use lower case pool for analysis
     def tag_pool(self):
-        self.pos_set = nltk.pos_tag(list(set(self.pool)))
+        if type(self.pool[0]) is not tuple:
+            self.pos_set = nltk.pos_tag(list(set(self.pool)))
+
         
     # remove more stopwords, pass as set or list, can use default collection in stopwords.py
     def filter_stopwords(self, words = 'default'):
@@ -400,6 +402,7 @@ class Process(Search):
             self.reset_summary()   
         elif with_bigrams is False and type(self.pool[0]) is tuple:
             self.restore_pool()
+            self.pool_summary(print_out,log_freqs,pos,with_filter,lower)
 
         total_words = len(self.pool)
         new_summary_header_bool = (log_freqs, pos)
@@ -445,6 +448,7 @@ class Process(Search):
 
         if print_out:
             return self.__print_out(new_h)
+    
     def summary_data(self):
         return self.summary
 
@@ -455,6 +459,7 @@ class Process(Search):
     def restore_pool(self):
         self.pool = self.pool_safe
         self.reset_summary()
+
         # may be better to store counted version instead of entire pool
     
     """
@@ -463,7 +468,7 @@ class Process(Search):
 
     def counts(self):
         if self.wcd == {}:
-            self.pool_summary(False)
+            self.pool_summary()
             self.counts()
         counts_list = sorted([self.wcd[w] for w in self.wcd], reverse = True)
         return counts_list
@@ -495,5 +500,4 @@ class Process(Search):
 
 # Database interface
 # Once database built, would be good to have python look to see if indeed job url has been searched before (recently) and use that data rather than getting it again
-# 
 #
