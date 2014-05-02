@@ -20,7 +20,7 @@ class Search:
     """
     # pass "e" for exact search or "ne" for not exact search. 
     #                          # default because num results probably low ...and it's funny?
-    def __init__(self, terms=("data+scientist","e"), loc = "Austin%2C+TX", num_res = 100, pages = 1):
+    def __init__(self, terms=("data+scientist","e"), loc="Austin%2C+TX", num_res=100, pages=1):
         self.term_search = ""
         self.e_ne = ""
         self.loc = ""
@@ -165,7 +165,7 @@ def get_html(link):
     data = ""    
     try:
         #print link 
-        req = urllib2.Request(link, headers = h)
+        req = urllib2.Request(link, headers=h)
         page = urllib2.urlopen(req, timeout=80)
         data = page.read()
         page.close()
@@ -199,7 +199,7 @@ class Process(Search):
     """
     """
     # will need an ability to load? 
-    def __init__(self, terms=("data+scientist", "e"), loc = "Austin%2C+TX", num_res = 100, pages = 1, sleep = (1,2)):
+    def __init__(self, terms=("data+scientist", "e"), loc="Austin%2C+TX", num_res=100, pages=1, sleep=(1,2)):
         Search.__init__(self, terms, loc, num_res, pages)
         # words that user thinks are important
         self.user_words = set([])
@@ -227,7 +227,7 @@ class Process(Search):
 
         self.summary_header_bool = (False, False)
    # add two (or More) Process objects -- may want to rethink behavior
-    def __add__(self,other):
+    def __add__(self, other):
         new_e_ne = "ne"
         """
         if self.e_ne == "e" and other.e_ne =="e":
@@ -276,7 +276,7 @@ class Process(Search):
         #finally:
            # return self.continue_dump(q, rec = True) 
     
-    def dump(self, q = 'all',rec = False):
+    def dump(self, q='all',rec=False):
         if q is 'all':
             # huge dump into the pool 
             data = self.raw_employer_data()
@@ -292,7 +292,7 @@ class Process(Search):
 
         self.pool_safe = self.pool
     
-    def continue_dump(self, q = "all", rec = False):
+    def continue_dump(self, q="all", rec=False):
         self.job_urls = self.backup_job_urls[self.count+1:]
         self.job_htmls = (get_html(url) for url in self.job_urls) 
         d = self.dump(q, rec)
@@ -308,7 +308,7 @@ class Process(Search):
             self.see_tagged_set()
         return self.pos_set
 
-    def lower_pool(self, protected = []):
+    def lower_pool(self, protected=[]):
         protected = set(protected)
         # if you want to lowerase all the words before analysis. 
         # Be careful here, will lose proper noun tags unless pass list to protected
@@ -334,14 +334,14 @@ class Process(Search):
 
         
     # remove more stopwords, pass as set or list, can use default collection in stopwords.py
-    def filter_stopwords(self, words = 'default'):
+    def filter_stopwords(self, words='default'):
         if type(words) is str:
             words = self.default_stopwords
         words = set(words)
         self.pool = [w for w in self.pool if w not in words]
         self.reset_summary()
     
-    def identify_NNP(self, with_counts = False):
+    def identify_NNP(self, with_counts=False):
         #returns ranked NNPs -- good enough?
         from nltk.corpus import wordnet
         ws = self.words()
@@ -382,7 +382,7 @@ class Process(Search):
 
                             # returning a string if you must store results in txt file -> interface with db would be better
     # rename to just 'summary' ?               #the log freq of ea word, the part of speech of ea. word
-    def pool_summary(self, print_out = False, log_freqs = False, pos = False, with_filter = False, lower = False, with_bigrams = False):
+    def pool_summary(self, print_out=False, log_freqs=False, pos=False, with_filter=False, lower=False, with_bigrams=False):
         # self.summary = {"Total_Words" : N , (nth, "Word_Count") : [(word1,count1),(word2,count2),(word3,count3)...(wordn,countn)] }
         # very primitive summary for all the words
         # the most basic (all params False) stores word : wordCount in self.summary.
@@ -427,7 +427,7 @@ class Process(Search):
             self.summary["Total_Words"] = total_words
             pre_data = self.summary[h]
 
-        if self.summary_header_bool == new_summary_header_bool:
+        if new_summary_header_bool == self.summary_header_bool:
             new_h = h
         elif new_summary_header_bool == (False, False):
             self.summary_header_bool = new_summary_header_bool
