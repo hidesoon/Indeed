@@ -435,17 +435,17 @@ class Process(Search):
             self.summary = {"Total_Words":total_words, new_h:[(w[0], w[1]) for w in pre_data]}
         elif new_summary_header_bool == (True, False):
             self.summary_header_bool = new_summary_header_bool
-            data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words))) for w in pre_data]), key = lambda t : t[1], reverse=True)
+            data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words))) for w in pre_data]), key = lambda t : t[1], reverse = True)
             self.summary = {"Total_Words":total_words, new_h:data}
         elif new_summary_header_bool == (False, True):
             self.summary_header_bool = new_summary_header_bool
             self.tag_pool()
-            data = sorted(set([(w[0], w[1], p) for w in pre_data for wp, p in self.pos_set if w[0]==wp]), key = lambda t : t[1], reverse=True)
+            data = sorted(set([(w[0], w[1], p) for w in pre_data for wp, p in self.pos_set if w[0]==wp]), key = lambda t : t[1], reverse = True)
             self.summary = {"Total_Words":total_words, new_h:data}       
         elif new_summary_header_bool == (True, True):
             self.summary_header_bool = new_summary_header_bool
             self.tag_pool()
-            data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words)), p) for w in pre_data for wp, p in self.pos_set if w[0]==wp]), key = lambda t : t[1], reverse=True)
+            data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words)), p) for w in pre_data for wp, p in self.pos_set if w[0]==wp]), key = lambda t : t[1], reverse = True)
             self.summary = {"Total_Words":total_words, new_h:data}        
 
         if print_out:
