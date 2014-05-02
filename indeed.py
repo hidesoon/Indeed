@@ -400,6 +400,7 @@ class Process(Search):
             self.reset_summary()   
         elif with_bigrams is False and self.pool[0] is tuple:
             self.restore_pool()
+            self.reset_summary()
             self.pool_summary(print_out, log_freqs, pos, with_filter, lower, False)
 
 
