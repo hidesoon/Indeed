@@ -176,7 +176,7 @@ def get_html(link):
 # also removes punctuation -- may need to refine sorts of punctuation to filter out. 
 def remove_stopwords(string, language="english"):
     stopwords = set(nltk.corpus.stopwords.words(language.lower()))
-    words = re.findall(r'[\w+\+]+', string, flags = re.UNICODE | re.LOCALE) 
+    words = re.findall(r'[\w\+\']+s?', string, flags = re.UNICODE ) 
     out_string = [w for w in words if w.lower() not in stopwords]
     return out_string
 
