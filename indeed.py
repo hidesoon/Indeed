@@ -70,7 +70,6 @@ class Search:
             self.backup_job_urls = self.job_urls
 
             # generator for job htmls, to access need to self.job_htmls.next(), nlp clean, process, etc
-            # need to allow for timeout ignoring
             self.job_htmls = (get_html(url) for url in self.job_urls)            
         except urllib2.HTTPError:
             print "Couldn't get indeed html files, check url accuracy."
@@ -134,7 +133,7 @@ class Search:
             self.count += 1
             return data
         except StopIteration:
-            return 
+            return None
 
     
     def raw_employer_data(self):
@@ -202,7 +201,7 @@ class Process(Search):
     def __init__(self, terms=("data+scientist", "e"), loc="Austin%2C+TX", num_res=100, pages=1, sleep=(1,2)):
         Search.__init__(self, terms, loc, num_res, pages)
         # words that user thinks are important
-        self.user_words = set([])
+        # self.user_words = set([])
         
         self.default_stopwords = set(nltk.corpus.stopwords.words('english'))
 
@@ -228,13 +227,7 @@ class Process(Search):
         self.summary_header_bool = (False, False)
    # add two (or More) Process objects -- may want to rethink behavior
     def __add__(self, other):
-        new_e_ne = "ne"
-        """
-        if self.e_ne == "e" and other.e_ne =="e":
-            new_e_ne = "e"
-        else:
-            new_e_ne = "ne" 
-        """ 
+        new_e_ne = "ne" 
         new_loc = ""
         if self.loc == other.loc:
             new_loc = self.loc
@@ -263,6 +256,12 @@ class Process(Search):
     def __pool_data(self, data, q):
         if len(data) > 5:
             self.pool += [word for sent in data for word in sent]
+            """
+            dum = []
+            for sent in data:
+                for word in sent:
+                    dum.append(word)"""
+
         try:
             time.sleep(self.sleep_f()) 
             data = self.raw_employer_data()
@@ -273,8 +272,7 @@ class Process(Search):
         except socket.timeout:
             print "Connection timed out, skipping to next url."
             return self.continue_dump(q, rec = True)
-        #finally:
-           # return self.continue_dump(q, rec = True) 
+ 
     
     def dump(self, q='all',rec=False):
         if q is 'all':
@@ -346,14 +344,14 @@ class Process(Search):
         from nltk.corpus import wordnet
         ws = self.words()
         caps = [w for w in ws if w[0].isupper()]
-        f1_caps = [w for w in caps if w not in stopwords.Capital_words]
+        f_caps = [w for w in caps if w not in stopwords.Capital_words]
         # Need to protect a few words...("Python")... if this gets too messy need to math it ... if word falls after 
         # curvature point in distribution then toss, else keep
         # Oh, could do a user feedback system...
         protected = ["Python", "Java", "Cloud", "Dell", "C", "R", "Go", "Oracle", "MS", "Apple", "Rails", "Ruby","Ebay"]
         # Relies on funny portmanteaus and neologs that companies/technologies tend to use
         # wordnet.synsets(string) returns [] if word is not found in their english dictionary
-        f2_caps = [w for w in f1_caps if w in protected or wordnet.synsets(w) == [] ]
+        f2_caps = [w for w in f_caps if w in protected or wordnet.synsets(w) == [] ]
 
         if with_counts:
             f2_caps = [(w, self.wcd[w]) for w in f2_caps]
