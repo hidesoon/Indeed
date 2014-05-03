@@ -183,8 +183,8 @@ def remove_stopwords(string, language="english"):
 def get_important_words(html):
     raw_data = clean_html(html)
     data_list = raw_data.split('\n')
-    de_stop_worded_data = filter(lambda l: l != [],[remove_stopwords(sentence.strip()) for sentence in data_list])
-    return de_stop_worded_data
+    de_stopworded_data = filter(lambda l: l != [],[remove_stopwords(sentence.strip()) for sentence in data_list])
+    return de_stopworded_data
 
 def bigramify(pool):
     return [(pool[idx], pool[idx+1]) for idx in range(len(pool[:-1]))]
@@ -384,7 +384,7 @@ class Process(Search):
         # self.summary = {"Total_Words" : N , (nth, "Word_Count") : [(word1,count1),(word2,count2),(word3,count3)...(wordn,countn)] }
         # very primitive summary for all the words
         # the most basic (all params False) stores word : wordCount in self.summary.
-        if with_bigrams is False and type(self.pool[0]) is tuple:
+        if not with_bigrams and type(self.pool[0]) is tuple:
             self.restore_pool()
             self.pool_summary(print_out,log_freqs,pos,with_filter,lower)
         
@@ -398,7 +398,7 @@ class Process(Search):
             self.lower_pool(protected = nnps)
             self.pool_summary(print_out, log_freqs, pos, with_filter, False)
 
-        if with_bigrams is True and type(self.pool[0]) is not tuple:
+        if with_bigrams and type(self.pool[0]) is not tuple:
             #  note that using pos option doesn't make sense here. ---- unless I make the pos able to be tupled too
             self.pool = bigramify(self.pool)
             self.reset_summary()   
