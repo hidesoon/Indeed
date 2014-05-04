@@ -159,8 +159,7 @@ def clean_html(html_file):
 
 #pass a link, pretend to be someone, get the html file: independent of class just in case wants to pass random link outside of indeed
 def get_html(link):
-    h = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
+    h = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36'}
     data = ""    
     try:
         #print link 
@@ -176,7 +175,7 @@ def get_html(link):
 # also removes punctuation -- may need to refine sorts of punctuation to filter out. 
 def remove_stopwords(string, language="english"):
     stopwords = set(nltk.corpus.stopwords.words(language.lower()))
-    words = re.findall(r'[\w\+\']+s?', string, flags = re.UNICODE ) 
+    words = re.findall(r'[\w\+]+', string) 
     out_string = [w for w in words if w.lower() not in stopwords]
     return out_string
 
