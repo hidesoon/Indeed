@@ -143,6 +143,8 @@ class Search:
         else:
             return None
 
+    #TODO: find the title of each job_url link and see if good to use for {link:title} to store in db
+
     """def current_job_url(self):
         if self.count is not None:
             return self.job_urls[self.count-1]"""
@@ -398,11 +400,11 @@ class Process(Search):
             self.pool_summary(print_out, log_freqs, pos, with_filter, False)
 
         if with_bigrams and type(self.pool[0]) is not tuple:
-            #  note that using pos option doesn't make sense here. ---- unless I make the pos able to be tupled too
+            #TODO: include pos tags in bigram output
             self.pool = bigramify(self.pool)
             self.reset_summary()   
 
-
+        # in the bigram case words means bigrams
         total_words = len(self.pool)
         new_summary_header_bool = (log_freqs, pos)
         h = self.__trans_header(self.summary_header_bool)
