@@ -235,7 +235,7 @@ class Process(Search):
         new_max_results = max([self.max_per_page, other.max_per_page])
         new_pages = max([self.pages, other.pages])
         # create new instance
-        n = Process((self.term_search + "+" + other.term_search, new_e_ne), loc = new_loc, num_res = new_max_results, pages = new_pages, sleep = self.sleep)
+        n = Process((self.term_search + "+" + other.term_search, new_e_ne), loc=new_loc, num_res=new_max_results, pages=new_pages, sleep=self.sleep)
 
         # Ie, locations differ, can't make a new search
         if new_loc == "":
@@ -346,7 +346,6 @@ class Process(Search):
     """
 
     def __print_out(self, h):
-        # doesn't account for bigram with pos option
         out_str = "Total_words: %s \n" % self.summary["Total_Words"]
         out_str += "\t".join(h) + '\n'
         for tup in self.summary[h]:
@@ -473,7 +472,7 @@ class Process(Search):
         if self.wcd == {}:
             self.pool_summary()
             self.counts()
-        counts_list = sorted([self.wcd[w] for w in self.wcd], reverse = True)
+        counts_list = sorted([self.wcd[w] for w in self.wcd], reverse=True)
         return counts_list
 
     def words(self):
