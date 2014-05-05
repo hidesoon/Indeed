@@ -490,7 +490,6 @@ class Process(Search):
             if self.pos_bigram_d == [] and len(self.pool) > 0:
                 self.tag_pool()
                 self.pos_bigram_d = dict([((tup),(self.pos_d[tup[0]],self.pos_d[tup[1]])) for tup in self.pool])
-                self.pos_tags()    
                 tags = [self.pos_bigram_d[t] for t in self.pool]
                 return tags            
             else:
@@ -499,7 +498,6 @@ class Process(Search):
         else:
             if self.pos_d == [] and len(self.pool) > 0:
                 self.tag_pool()
-                self.pos_tags()
                 tags = [self.pos_d[w] for w in self.pool]
                 return tags               
             else:
