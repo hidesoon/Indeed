@@ -75,7 +75,7 @@ class Search:
             print "Couldn't get indeed html files, check url accuracy."
 
     def __construct_URL(self):
-        #defaults = {'jt':'all','radius':'25','fromage':'any','limit':'10'}
+        # defaults = {'jt':'all','radius':'25','fromage':'any','limit':'10'}
         # literal url construction, may need to build catch -> form injection: Selenium
         url_list = ['http://www.indeed.com/jobs?as_and=', '&as_phr=', '&as_any=', '&as_not=', 
         '&as_ttl=', '&as_cmp=', '&jt=all', '&st=', '&salary=', '&radius=25','&l=', '&fromage=any', '&limit=', 
@@ -112,8 +112,6 @@ class Search:
         return cleaned_html"""
     # remove stopwords from given container
 
-    #  d1 = {(title,external_url):"raw html file of external url"} ?
-    #  d2 = {(title,external_url):[cleaned html file of external url]} ?
 
     def __identify_job_urls(self):
         
@@ -121,7 +119,6 @@ class Search:
         flatten_redirect_links = [link[:-1] for page in raw_redirect_links for link in page]            
         indeedified = ["http://indeed.com"+ s for s in flatten_redirect_links]
         return indeedified
-
 
     # if you just want the raw html file from the search results
     def next(self):
@@ -134,7 +131,6 @@ class Search:
             return data
         except StopIteration:
             return None
-
     
     def raw_employer_data(self):
         html_file = self.next()
@@ -356,6 +352,7 @@ class Process(Search):
     """
 
     def __print_out(self, h):
+        # doesn't account for bigram with pos option
         out_str = "Total_words: %s \n" % self.summary["Total_Words"]
         out_str += "\t".join(h) + '\n'
         for tup in self.summary[h]:
@@ -494,6 +491,28 @@ class Process(Search):
         data = self.summary[current_h]
         words = [t[0] for t in data]
         return words
+
+    def pos_tags(self):
+        if self.__is_bigrammed():
+            if self.pos_bigram_d == [] and len(self.pool) > 0:
+                self.tag_pool()
+                self.pos_bigram_d = dict([((tup),(self.pos_d[tup[0]],self.pos_d[tup[1]])) for tup in self.pool])
+                self.pos_tags()    
+                tags = [self.pos_bigram_d[t] for t in self.pool]
+                return tags            
+            else:
+                tags = [self.pos_bigram_d[t] for t in self.pool]
+                return tags
+        else:
+            if self.pos_d == [] and len(self.pool) > 0:
+                self.tag_pool()
+                self.pos_tags()
+                tags = [self.pos_d[w] for w in self.pool]
+                return tags               
+            else:
+                tags = [self.pos_d[w] for w in self.pool]
+                return tags
+
 
     """
     option: strict -> use large stopwords list to remove even more words.

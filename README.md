@@ -103,6 +103,8 @@ Automating the search process and getting the data in a good format for analysis
 
 	p.counts() # sorted list of counts -- separate from word 
 	p.words() # ranked list of words -- separate from counts
+	p.pos_tags() # pos tags given in order they appear
+
 	# can add different Process objects, if locations are the same, can add to pool via dump function
 	# if locations are different will just pool the pools for access to other functions
 	q = indeed.Process(("Java","e"))
