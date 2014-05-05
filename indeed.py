@@ -292,12 +292,6 @@ class Process(Search):
     def see_pool(self):
         return self.pool
 
-    def see_tagged_set(self):
-        if self.pos_d == set([]) and len(self.pool) > 0:
-            self.tag_pool()
-            self.see_tagged_set()
-        return self.pos_d
-
     def lower_pool(self, protected=[]):
         protected = set(protected)
         # if you want to lowerase all the words before analysis. 
@@ -384,17 +378,17 @@ class Process(Search):
         # current pool is bigrammed but user doesn't want it to be
         if not with_bigrams and self.__is_bigrammed():
             self.restore_pool()
-            self.pool_summary(print_out,log_freqs,pos,with_filter,lower)
+            self.pool_summary(print_out,log_freqs,pos,with_filter,lower, with_bigrams)
         # apply medium filter
         if with_filter:
             self.filter_stopwords(stopwords.Capital_words)
             self.filter_stopwords(stopwords.Lower_words)
-            self.pool_summary(print_out, log_freqs, pos, False, lower)
+            self.pool_summary(print_out, log_freqs, pos, False, lower, with_bigrams)
         # lowercase a bunch of words, keeps a protected set
         if lower:
             nnps = self.identify_NNP()
             self.lower_pool(protected=nnps)
-            self.pool_summary(print_out, log_freqs, pos, with_filter, False)
+            self.pool_summary(print_out, log_freqs, pos, with_filter, False, with_bigrams)
         # user wants bigrammed version but pool is not bigrammed
         if with_bigrams and not self.__is_bigrammed(): 
             self.pool = bigramify(self.pool)
@@ -435,24 +429,24 @@ class Process(Search):
             self.summary = {"Total_Words":total_words, new_h:[(w[0], w[1]) for w in pre_data]}
         elif new_summary_header_bool == (True, False):
             self.summary_header_bool = new_summary_header_bool
-            data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words))) for w in pre_data]), key=lambda t : t[1], reverse=True)
+            data = sorted([(w[0], w[1], math.log(w[1]/float(total_words))) for w in pre_data], key=lambda t : t[1], reverse=True)
             self.summary = {"Total_Words":total_words, new_h:data}
         elif new_summary_header_bool == (False, True):
             self.summary_header_bool = new_summary_header_bool
             self.tag_pool()
             if not self.__is_bigrammed():
-                data = sorted(set([(w[0], w[1], self.pos_d[w[0]]) for w in pre_data]), key=lambda t : t[1], reverse=True)
+                data = sorted([(w[0], w[1], self.pos_d[w[0]]) for w in pre_data], key=lambda t : t[1], reverse=True)
             else:
-                data = sorted(set([(w[0], w[1], self.pos_bigram_d[w[0]]) for w in pre_data]), key=lambda t : t[1], reverse=True)
+                data = sorted([(w[0], w[1], self.pos_bigram_d[w[0]]) for w in pre_data], key=lambda t : t[1], reverse=True)
             self.summary = {"Total_Words":total_words, new_h:data}       
         elif new_summary_header_bool == (True, True):
             data = []
             self.summary_header_bool = new_summary_header_bool
             self.tag_pool()
             if not self.__is_bigrammed():
-                data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words)), self.pos_d[w[0]]) for w in pre_data]), key=lambda t : t[1], reverse=True)
+                data = sorted([(w[0], w[1], math.log(w[1]/float(total_words)), self.pos_d[w[0]]) for w in pre_data], key=lambda t : t[1], reverse=True)
             else:
-                data = sorted(set([(w[0], w[1], self.pos_bigram_d[w[0]]) for w in pre_data]), key=lambda t : t[1], reverse=True)
+                data = sorted([(w[0], w[1], self.pos_bigram_d[w[0]]) for w in pre_data], key=lambda t : t[1], reverse=True)
             self.summary = {"Total_Words":total_words, new_h:data}        
 
         if print_out:
@@ -512,7 +506,6 @@ class Process(Search):
             else:
                 tags = [self.pos_d[w] for w in self.pool]
                 return tags
-
 
     """
     option: strict -> use large stopwords list to remove even more words.
