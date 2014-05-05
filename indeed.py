@@ -212,7 +212,7 @@ class Process(Search):
         self.pool = []
         
         # revert to original pool
-        self.pool_safe = []
+        self.backup_pool = []
 
         # part of speech tagged set, based on pool
         self.pos_set = set([])
@@ -245,11 +245,6 @@ class Process(Search):
 
     """def __repr__(self):"""
 
-
-    """def set_important_words(self, list_words):
-        # special consideration to the given set, will weigh results based on given words
-        self.user_words = set(list_words)
-        """
     # q = quantity/num pages, v = verbose -> print out current num, total words so far....
     # memory option? -> will check if job_url has been used recently and skip     
 
@@ -257,8 +252,8 @@ class Process(Search):
     def __pool_data(self, data, q):
         if len(data) > 5:
             self.pool += [word for sent in data for word in sent]
-            self.pool_safe += self.pool
-
+            self.backup_pool = self.pool[:]
+            
             """
             dum = []
             for sent in data:
@@ -461,7 +456,7 @@ class Process(Search):
         self.summary_header_bool = (False, False)         
     # every pool needs a safety floatation device
     def restore_pool(self):
-        self.pool = self.pool_safe
+        self.pool = self.backup_pool
         self.reset_summary()
 
         # may be better to store counted version instead of entire pool
