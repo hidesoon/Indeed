@@ -214,8 +214,11 @@ class Process(Search):
         # revert to original pool
         self.backup_pool = []
 
-        # part of speech tagged set, based on pool
-        self.pos_set = set([])
+        # part of speech tagged list, based on pool -- will transform to dict
+        self.pos_d = []
+
+        # part of speech tagged list for bigrams -- will transform to dict
+        self.pos_bigram_d = []
         
         # summary consisting of counts, words, individual word count, etc
         self.summary = {"Total_Words":0, ("Word", "Word_Count"):[]}
@@ -253,12 +256,6 @@ class Process(Search):
         if len(data) > 5:
             self.pool += [word for sent in data for word in sent]
             self.backup_pool = self.pool[:]
-            
-            """
-            dum = []
-            for sent in data:
-                for word in sent:
-                    dum.append(word)"""
 
         try:
             time.sleep(self.sleep_f()) 
@@ -300,10 +297,10 @@ class Process(Search):
         return self.pool
 
     def see_tagged_set(self):
-        if self.pos_set == set([]) and len(self.pool) > 0:
+        if self.pos_d == set([]) and len(self.pool) > 0:
             self.tag_pool()
             self.see_tagged_set()
-        return self.pos_set
+        return self.pos_d
 
     def lower_pool(self, protected=[]):
         protected = set(protected)
@@ -326,9 +323,7 @@ class Process(Search):
         self.reset_summary()
     # pass True if you want to use lower case pool for analysis
     def tag_pool(self):
-        if type(self.pool[0]) is not tuple:
-            self.pos_set = nltk.pos_tag(list(set(self.pool)))
-
+        self.pos_d = dict(nltk.pos_tag(list(set(self.backup_pool))))
         
     # remove more stopwords, pass as set or list, can use default collection in stopwords.py
     def filter_stopwords(self, words='default'):
@@ -377,30 +372,40 @@ class Process(Search):
         elif tup_h == (True, True):
             return ("Word", "Word_Count", "Log_Freqs", "POS_Tag") 
 
+    def __is_bigrammed(self):
+        if type(self.pool[0]) is tuple:
+            return True
+        elif type(self.pool[0]) is str:
+            return False
                             # returning a string if you must store results in txt file -> interface with db would be better
     # rename to just 'summary' ?               #the log freq of ea word, the part of speech of ea. word
     def pool_summary(self, print_out=False, log_freqs=False, pos=False, with_filter=False, lower=False, with_bigrams=False):
         # self.summary = {"Total_Words" : N , (nth, "Word_Count") : [(word1,count1),(word2,count2),(word3,count3)...(wordn,countn)] }
         # very primitive summary for all the words
         # the most basic (all params False) stores word : wordCount in self.summary.
-        if not with_bigrams and type(self.pool[0]) is tuple:
+        
+        # current pool is bigrammed but user doesn't want it to be
+        if not with_bigrams and self.__is_bigrammed():
             self.restore_pool()
             self.pool_summary(print_out,log_freqs,pos,with_filter,lower)
-        
+        # apply medium filter
         if with_filter:
             self.filter_stopwords(stopwords.Capital_words)
             self.filter_stopwords(stopwords.Lower_words)
             self.pool_summary(print_out, log_freqs, pos, False, lower)
-        
+        # lowercase a bunch of words, keeps a protected set
         if lower:
             nnps = self.identify_NNP()
-            self.lower_pool(protected = nnps)
+            self.lower_pool(protected=nnps)
             self.pool_summary(print_out, log_freqs, pos, with_filter, False)
-
-        if with_bigrams and type(self.pool[0]) is not tuple:
-            #TODO: include pos tags in bigram output
+        # user wants bigrammed version but pool is not bigrammed
+        if with_bigrams and not self.__is_bigrammed(): 
             self.pool = bigramify(self.pool)
             self.reset_summary()
+
+        if self.__is_bigrammed and self.pos_bigram_d == [] and pos:
+            self.tag_pool()
+            self.pos_bigram_d = dict([((tup),(self.pos_d[tup[0]],self.pos_d[tup[1]])) for tup in self.pool])
 
         # in the bigram case words means bigrams
         total_words = len(self.pool)
@@ -408,6 +413,7 @@ class Process(Search):
         h = self.__trans_header(self.summary_header_bool)
         new_h = self.__trans_header(new_summary_header_bool)
         pre_data = self.summary[h]
+        data = []
 
         if pre_data == []:
             """
@@ -420,7 +426,7 @@ class Process(Search):
             self.wcd = word_count_dict
             for key in word_count_dict:
                 self.summary[h].append((key,word_count_dict[key]))
-            self.summary[h] = sorted(self.summary[h], key = lambda t : t[1], reverse = True)
+            self.summary[h] = sorted(self.summary[h], key=lambda t : t[1], reverse=True)
             self.summary["Total_Words"] = total_words
             pre_data = self.summary[h]
 
@@ -432,17 +438,24 @@ class Process(Search):
             self.summary = {"Total_Words":total_words, new_h:[(w[0], w[1]) for w in pre_data]}
         elif new_summary_header_bool == (True, False):
             self.summary_header_bool = new_summary_header_bool
-            data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words))) for w in pre_data]), key = lambda t : t[1], reverse = True)
+            data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words))) for w in pre_data]), key=lambda t : t[1], reverse=True)
             self.summary = {"Total_Words":total_words, new_h:data}
         elif new_summary_header_bool == (False, True):
             self.summary_header_bool = new_summary_header_bool
             self.tag_pool()
-            data = sorted(set([(w[0], w[1], p) for w in pre_data for wp, p in self.pos_set if w[0]==wp]), key = lambda t : t[1], reverse = True)
+            if not self.__is_bigrammed():
+                data = sorted(set([(w[0], w[1], self.pos_d[w[0]]) for w in pre_data]), key=lambda t : t[1], reverse=True)
+            else:
+                data = sorted(set([(w[0], w[1], self.pos_bigram_d[w[0]]) for w in pre_data]), key=lambda t : t[1], reverse=True)
             self.summary = {"Total_Words":total_words, new_h:data}       
         elif new_summary_header_bool == (True, True):
+            data = []
             self.summary_header_bool = new_summary_header_bool
             self.tag_pool()
-            data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words)), p) for w in pre_data for wp, p in self.pos_set if w[0]==wp]), key = lambda t : t[1], reverse = True)
+            if not self.__is_bigrammed():
+                data = sorted(set([(w[0], w[1], math.log(w[1]/float(total_words)), self.pos_d[w[0]]) for w in pre_data]), key=lambda t : t[1], reverse=True)
+            else:
+                data = sorted(set([(w[0], w[1], self.pos_bigram_d[w[0]]) for w in pre_data]), key=lambda t : t[1], reverse=True)
             self.summary = {"Total_Words":total_words, new_h:data}        
 
         if print_out:
