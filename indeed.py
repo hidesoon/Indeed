@@ -9,7 +9,7 @@ except ImportError:
      print "Sorry, I need nltk to work at the moment. "
 
 #Native
-import urllib2, re, os, collections, math, random, time, socket
+import urllib2, re, collections, math, random, time, socket
 # import threading
 
 #Here
@@ -169,16 +169,16 @@ def get_html(link):
         page = urllib2.urlopen(req, timeout=80)
         data = page.read()
         page.close()
-    except urllib2.HTTPError, e:
+    except urllib2.HTTPError:
         print "Ignoring link: %s " %link
 
     return data
 
 # also removes punctuation -- may need to refine sorts of punctuation to filter out. 
 def remove_stopwords(string, language="english"):
-    stopwords = set(nltk.corpus.stopwords.words(language.lower()))
+    stop_words = set(nltk.corpus.stopwords.words(language.lower()))
     words = re.findall(r'[\w\+]+', string) 
-    out_string = [w for w in words if w.lower() not in stopwords]
+    out_string = [w for w in words if w.lower() not in stop_words]
     return out_string
 
 def get_important_words(html):
@@ -302,7 +302,7 @@ class Process(Search):
         return self.pool
 
     def see_tagged_set(self):
-        if self.pos_set == set([]) and len(pool) > 0:
+        if self.pos_set == set([]) and len(self.pool) > 0:
             self.tag_pool()
             self.see_tagged_set()
         return self.pos_set
@@ -501,4 +501,3 @@ class Process(Search):
 
 # Database interface
 # Once database built, would be good to have python look to see if indeed job url has been searched before (recently) and use that data rather than getting it again
-#
