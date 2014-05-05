@@ -9,7 +9,7 @@ except ImportError:
      print "Sorry, I need nltk to work at the moment. "
 
 #Native
-import urllib2, re, collections, math, random, time, socket
+import urllib2, re, collections, math, random, time, socket, ssl
 # import threading
 
 #Here
@@ -257,6 +257,8 @@ class Process(Search):
     def __pool_data(self, data, q):
         if len(data) > 5:
             self.pool += [word for sent in data for word in sent]
+            self.pool_safe += self.pool
+
             """
             dum = []
             for sent in data:
@@ -272,6 +274,9 @@ class Process(Search):
             return self.continue_dump(q, rec = True)
         except socket.timeout:
             print "Connection timed out, skipping to next url."
+            return self.continue_dump(q, rec = True)
+        except ssl.SSLError:
+            print "SSL error, skipping site."
             return self.continue_dump(q, rec = True)
  
     
@@ -289,8 +294,6 @@ class Process(Search):
             while self.count < q and data is not None:
                 data = self.__pool_data(data, q)
 
-        self.pool_safe = self.pool
-    
     def continue_dump(self, q="all", rec=False):
         self.job_urls = self.backup_job_urls[self.count+1:]
         self.job_htmls = (get_html(url) for url in self.job_urls) 
@@ -402,7 +405,7 @@ class Process(Search):
         if with_bigrams and type(self.pool[0]) is not tuple:
             #TODO: include pos tags in bigram output
             self.pool = bigramify(self.pool)
-            self.reset_summary()   
+            self.reset_summary()
 
         # in the bigram case words means bigrams
         total_words = len(self.pool)
