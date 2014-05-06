@@ -296,7 +296,7 @@ class Process(Search):
     def see_pool(self):
         return self.pool
 
-    def lower_pool(self, protected=[], pool = []):
+    def lower_pool(self, protected=[]):
         protected = set(protected)
         # if you want to lowerase all the words before analysis. 
         # Be careful here, will lose proper noun tags unless pass list to protected
