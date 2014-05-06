@@ -140,11 +140,7 @@ class Search:
 
     #TODO: find the title of each job_url link and see if good to use for {link:title} to store in db
 
-    """def current_job_url(self):
-        if self.count is not None:
-            return self.job_urls[self.count-1]"""
-
-    # Should be able to have user specify a list of words they think are important and should be looking for
+    """def current_job_url(self):"""
 
 #########################    END OF "Search" CLASS     #########################
 #                                                                              #
@@ -169,7 +165,7 @@ def get_html(link):
 
     return data
 
-# also removes punctuation -- may need to refine sorts of punctuation to filter out. 
+# also removes punctuation -- may need to refine sorts of punctuation to filter out. Not handling UNICODE in international letters
 def remove_stopwords(string, language="english"):
     stop_words = set(nltk.corpus.stopwords.words(language.lower()))
     words = re.findall(r'[\w\+]+', string) 
