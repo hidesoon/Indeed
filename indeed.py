@@ -252,19 +252,19 @@ class Process(Search):
             self.pool += [word for sent in data for word in sent]
             self.backup_pool = self.pool[:]
 
-            try:
-                time.sleep(self.sleep_f()) 
-                data = self.raw_employer_data()
-                return data
-            except urllib2.URLError:
-                print "Bad url, skipping to next url."
-                return self.continue_dump(q, rec = True)
-            except socket.timeout:
-                print "Connection timed out, skipping to next url."
-                return self.continue_dump(q, rec = True)
-            except ssl.SSLError:
-                print "SSL error, skipping site."
-                return self.continue_dump(q, rec = True)
+        try:
+            time.sleep(self.sleep_f()) 
+            data = self.raw_employer_data()
+            return data
+        except urllib2.URLError:
+            print "Bad url, skipping to next url."
+            return self.continue_dump(q, rec = True)
+        except socket.timeout:
+            print "Connection timed out, skipping to next url."
+            return self.continue_dump(q, rec = True)
+        except ssl.SSLError:
+            print "SSL error, skipping site."
+            return self.continue_dump(q, rec = True)
  
     
     def dump(self, q='all',rec=False):
