@@ -1,0 +1,35 @@
+>>> import indeed
+>>> import threading
+>>> p = indeed.Process()
+>>> q = indeed.Process(loc="San Jose, CA")
+>>> n = threading.Thread(target=p)
+>>> o = threading.Thread(target=q)
+>>> n.start()
+>>> 1
+Ignoring link: http://indeed.com/rc/clk?jk=acee208412017597 
+2
+3
+4
+5
+6
+o.start()
+>>> Ignoring link: http://indeed.com/rc/clk?jk=45dfabae763dfcc6 
+1
+7
+8
+2
+3
+9
+4
+10
+11
+5
+6
+12
+Ignoring link: http://indeed.com/rc/clk?jk=4f0b8e794d723738 
+13
+7
+14
+8
+15
+9

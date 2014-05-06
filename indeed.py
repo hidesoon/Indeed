@@ -125,7 +125,7 @@ class Search:
             self.count = 1
         try:
             data = self.job_htmls.next()
-            print self.count
+            #print self.count
             self.count += 1
             return data
         except StopIteration:
@@ -193,7 +193,7 @@ def bigramify(pool):
 class Process(Search):
     """
     """
-    # will need an ability to load? 
+    # will need an ability to load
     def __init__(self, terms=("data+scientist", "e"), loc="Austin%2C+TX", num_res=100, pages=1, sleep=(1,2)):
         Search.__init__(self, terms, loc, num_res, pages)
         # words that user thinks are important
@@ -224,6 +224,11 @@ class Process(Search):
         self.wcd = {}
 
         self.summary_header_bool = (False, False)
+   
+    # allow for threading
+    def __call__(self):
+        self.dump()
+
    # add two (or More) Process objects -- may want to rethink behavior
     def __add__(self, other):
         new_e_ne = "ne" 
@@ -266,7 +271,7 @@ class Process(Search):
             print "SSL error, skipping site."
             return self.continue_dump(q, rec = True)
  
-    
+    # may want to print self.count for each iteration while testing.
     def dump(self, q='all',rec=False):
         if q is 'all':
             # huge dump into the pool 
