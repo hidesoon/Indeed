@@ -296,7 +296,7 @@ class Process(Search):
     def see_pool(self):
         return self.pool
 
-    def lower_pool(self, protected=[]):
+    def lower_pool(self, protected=[], pool = []):
         protected = set(protected)
         # if you want to lowerase all the words before analysis. 
         # Be careful here, will lose proper noun tags unless pass list to protected
@@ -336,7 +336,8 @@ class Process(Search):
         # Need to protect a few words...("Python")... if this gets too messy need to math it ... if word falls after 
         # curvature point in distribution then toss, else keep
         # Oh, could do a user feedback system...
-        protected = ["Python", "Java", "Cloud", "Dell", "C", "R", "Go", "Oracle", "MS", "Apple", "Rails", "Ruby","Ebay"]
+        protected = ["Python", "Java", "Cloud", "Dell", "C", "R", "Go", "Oracle", "MS", "Apple", "Rails", "Ruby","Ebay",
+        "SAS", "SPSS", "Hive", "Pig"]
         # Relies on funny portmanteaus and neologs that companies/technologies tend to use
         # wordnet.synsets(string) returns [] if word is not found in their english dictionary
         f2_caps = [w for w in f_caps if w in protected or wordnet.synsets(w) == [] ]
@@ -388,10 +389,14 @@ class Process(Search):
             self.filter_stopwords(stopwords.Lower_words)
             self.pool_summary(print_out, log_freqs, pos, False, lower, with_bigrams)
         # lowercase a bunch of words, keeps a protected set
-        if lower:
+        if lower and not with_bigrams:
             nnps = self.identify_NNP()
             self.lower_pool(protected=nnps)
-            self.pool_summary(print_out, log_freqs, pos, with_filter, False, with_bigrams)
+            self.pool_summary(print_out, log_freqs, pos, with_filter, False, with_bigrams)  
+        elif lower and with_bigrams:
+            self.pool_summary(print_out, log_freqs, pos, with_filter, True, False)
+            self.pool_summary(print_out, log_freqs, pos, with_filter, False, True)
+
         # user wants bigrammed version but pool is not bigrammed
         if with_bigrams and not self.__is_bigrammed(): 
             self.pool = bigramify(self.pool)
