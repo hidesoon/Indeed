@@ -393,7 +393,8 @@ class Process(Search):
             nnps = self.identify_NNP()
             self.lower_pool(protected=nnps)
             self.pool_summary(print_out, log_freqs, pos, with_filter, False, with_bigrams)  
-        elif lower and with_bigrams:
+        elif lower and (with_bigrams or self.__is_bigrammed()):
+            self.restore_pool()
             self.pool_summary(print_out, log_freqs, pos, with_filter, True, False)
             self.pool_summary(print_out, log_freqs, pos, with_filter, False, True)
 
