@@ -56,16 +56,16 @@ class Search:
             raise SyntaxError, ("Need 'e' or 'ne' parameter for search")
 
         # make set of urls for search from indeed.com
-        self.urls = self.__construct_URL()
+        self.urls = self._construct_URL()
         
         try:
             # get html file associated with search from indeed.com
             self.html_files = [urllib2.urlopen(url).read() for url in self.urls]
 
             # clean the surface search  
-            # self.clean_htmls =  self.__clean_html_files()   
+            # self.clean_htmls =  self._clean_html_files()   
             # list of all indeed job url redirects
-            self.job_urls = list(set(self.__identify_job_urls()))
+            self.job_urls = list(set(self._identify_job_urls()))
             self.backup_job_urls = self.job_urls
 
             # generator for job htmls, to access need to self.job_htmls.next(), nlp clean, process, etc
@@ -73,7 +73,7 @@ class Search:
         except urllib2.HTTPError:
             print "Couldn't get indeed html files, check url accuracy."
 
-    def __construct_URL(self):
+    def _construct_URL(self):
         # defaults = {'jt':'all','radius':'25','fromage':'any','limit':'10'}
         # literal url construction, may need to build catch -> form injection: Selenium
         url_list = ['http://www.indeed.com/jobs?as_and=', '&as_phr=', '&as_any=', '&as_not=', 
@@ -97,7 +97,7 @@ class Search:
         return set_urls
     
     # specific to indeed search results?
-    """def __clean_html_files(self):
+    """def _clean_html_files(self):
         # take all the html tags out
         prelim_clean = [clean_html(html) for html in self.html_files]
         # remove crazy excess of \n
@@ -112,7 +112,7 @@ class Search:
     # remove stopwords from given container
 
 
-    def __identify_job_urls(self):
+    def _identify_job_urls(self):
         
         raw_redirect_links = [re.findall(r'\/rc\/clk\?jk=[\w]+"',data) for data in self.html_files]
         flatten_redirect_links = [link[:-1] for page in raw_redirect_links for link in page]            
@@ -252,13 +252,13 @@ class Process(Search):
     # memory option? -> will check if job_url has been used recently and skip     
 
     # dump functions: if something goes wrong, do self.continue_dump(q) and keep going
-    def __pool_data(self, data, q):
+    def _pool_data(self, data, q):
         if len(data) > 5:
             self.pool += [word for sent in data for word in sent]
             self.backup_pool = self.pool[:]
+            time.sleep(self.sleep_f()) 
 
         try:
-            time.sleep(self.sleep_f()) 
             data = self.raw_employer_data()
             return data
         except urllib2.URLError:
@@ -279,12 +279,12 @@ class Process(Search):
             if rec: return data
             while data is not None:
                 # might want to include options for identifying information on data by data basis, might need a dict with {indeed url : cleaned html}
-                data = self.__pool_data(data, q)
+                data = self._pool_data(data, q)
         elif type(q) is int:
             data = self.raw_employer_data()
             if rec: return data
             while self.count < q and data is not None:
-                data = self.__pool_data(data, q)
+                data = self._pool_data(data, q)
 
     def continue_dump(self, q="all", rec=False):
         self.job_urls = self.backup_job_urls[self.count+1:]
@@ -350,14 +350,14 @@ class Process(Search):
     def store_raw_corpus(self, file_name):
     """
 
-    def __print_out(self, h):
+    def _print_out(self, h):
         out_str = "Total_words: %s \n" % self.summary["Total_Words"]
         out_str += "\t".join(h) + '\n'
         for tup in self.summary[h]:
             out_str += "%s\t"*len(h) %tup+'\n'
         return out_str 
 
-    def __trans_header(self, tup_h):
+    def _trans_header(self, tup_h):
         if tup_h == (False, False):
             return ("Word", "Word_Count")
         elif tup_h == (True, False):
@@ -367,7 +367,7 @@ class Process(Search):
         elif tup_h == (True, True):
             return ("Word", "Word_Count", "Log_Freqs", "POS_Tag") 
 
-    def __is_bigrammed(self):
+    def _is_bigrammed(self):
         if type(self.pool[0]) is tuple:
             return True
         elif type(self.pool[0]) is str:
@@ -380,7 +380,7 @@ class Process(Search):
         # the most basic (all params False) stores word : wordCount in self.summary.
         
         # current pool is bigrammed but user doesn't want it to be
-        if not with_bigrams and self.__is_bigrammed():
+        if not with_bigrams and self._is_bigrammed():
             self.restore_pool()
             self.pool_summary(print_out,log_freqs,pos,with_filter,lower, with_bigrams)
         # apply medium filter
@@ -393,25 +393,25 @@ class Process(Search):
             nnps = self.identify_NNP()
             self.lower_pool(protected=nnps)
             self.pool_summary(print_out, log_freqs, pos, with_filter, False, with_bigrams)  
-        elif lower and (with_bigrams or self.__is_bigrammed()):
+        elif lower and (with_bigrams or self._is_bigrammed()):
             self.restore_pool()
             self.pool_summary(print_out, log_freqs, pos, with_filter, True, False)
             self.pool_summary(print_out, log_freqs, pos, with_filter, False, True)
 
         # user wants bigrammed version but pool is not bigrammed
-        if with_bigrams and not self.__is_bigrammed(): 
+        if with_bigrams and not self._is_bigrammed(): 
             self.pool = bigramify(self.pool)
             self.reset_summary()
 
-        if pos and self.__is_bigrammed and self.pos_bigram_d == []:
+        if pos and self._is_bigrammed and self.pos_bigram_d == []:
             self.tag_pool()
             self.pos_bigram_d = dict([((tup),(self.pos_d[tup[0]],self.pos_d[tup[1]])) for tup in self.pool])
 
         # in the bigram case words means bigrams
         total_words = len(self.pool)
         new_summary_header_bool = (log_freqs, pos)
-        h = self.__trans_header(self.summary_header_bool)
-        new_h = self.__trans_header(new_summary_header_bool)
+        h = self._trans_header(self.summary_header_bool)
+        new_h = self._trans_header(new_summary_header_bool)
         pre_data = self.summary[h]
         data = []
 
@@ -443,7 +443,7 @@ class Process(Search):
         elif new_summary_header_bool == (False, True):
             self.summary_header_bool = new_summary_header_bool
             self.tag_pool()
-            if not self.__is_bigrammed():
+            if not self._is_bigrammed():
                 data = sorted([(w[0], w[1], self.pos_d[w[0]]) for w in pre_data], key=lambda t : t[1], reverse=True)
             else:
                 data = sorted([(w[0], w[1], self.pos_bigram_d[w[0]]) for w in pre_data], key=lambda t : t[1], reverse=True)
@@ -452,14 +452,14 @@ class Process(Search):
             data = []
             self.summary_header_bool = new_summary_header_bool
             self.tag_pool()
-            if not self.__is_bigrammed():
+            if not self._is_bigrammed():
                 data = sorted([(w[0], w[1], math.log(w[1]/float(total_words)), self.pos_d[w[0]]) for w in pre_data], key=lambda t : t[1], reverse=True)
             else:
                 data = sorted([(w[0], w[1], self.pos_bigram_d[w[0]]) for w in pre_data], key=lambda t : t[1], reverse=True)
             self.summary = {"Total_Words":total_words, new_h:data}        
 
         if print_out:
-            return self.__print_out(new_h)
+            return self._print_out(new_h)
     
     def summary_data(self):
         return self.summary
@@ -488,13 +488,13 @@ class Process(Search):
         if self.summary["Total_Words"] == 0:
             self.pool_summary(False)
             self.words()
-        current_h = self.__trans_header(self.summary_header_bool)
+        current_h = self._trans_header(self.summary_header_bool)
         data = self.summary[current_h]
         words = [t[0] for t in data]
         return words
 
     def pos_tags(self):
-        if self.__is_bigrammed():
+        if self._is_bigrammed():
             if self.pos_bigram_d == [] and len(self.pool) > 0:
                 self.tag_pool()
                 self.pos_bigram_d = dict([((tup),(self.pos_d[tup[0]],self.pos_d[tup[1]])) for tup in self.pool])
