@@ -1,0 +1,110 @@
+Staff Accountant
+Accountant
+CONTROLLER
+Business Analyst
+Account Manager
+Accounting Clerk
+Senior Accountant
+Accounts Payable Clerk
+Accounting Manager
+Bookkeeper
+Customer Service Representative
+Marketing Coordinator
+Assistant Manager
+Store Manager
+Customer Service Rep
+Marketing Manager
+Customer Service
+Customer Service Associate
+CALL CENTER REPRESENTATIVE
+guest service representative
+Property Manager
+Leasing Consultant
+Assistant Property Manager
+Groundskeeper
+Mortgage Loan Officer
+COMMUNITY MANAGER
+Leasing Agent
+Assistant Community Manager
+LOAN OFFICER
+GIS Technician
+Graphic Designer
+Technical Writer
+Communications Specialist
+Copywriter
+Creative Director
+Art Director	
+Editor
+Editorial Assistant
+Designer
+Social Media Specialist
+Maintenance Technician
+Production Supervisor
+Assembler
+Product Manager
+Backroom Team Member
+Field Service Technician
+Scheduler
+Welder
+MAINTENANCE MECHANIC
+Production Manager
+Graphic Designer
+Business Analyst
+Data Analyst
+Software Engineer
+Program Manager
+Technical Writer
+Systems Administrator
+Manufacturing Engineer
+Electrical Engineer
+Network Engineer
+Human Resources Assistant
+Human Resources Generalist
+Human Resources Manager
+Recruiter
+HR Generalist
+Human Resources Coordinator
+Human Resource Assistant
+HR Assistant
+Payroll Specialist
+HR Coordinator
+Housekeeper
+Barista (US)
+CUSTODIAN
+Food Service Worker	
+Server
+Front Desk Agent
+Front Desk Clerk	
+Cook
+EVENT COORDINATOR
+Restaurant Manager
+Medical Assistant
+Registered Nurse
+Pharmacy Technician Trainee / Pharm…
+Medical Receptionist
+Pharmacy Technician
+Phlebotomist
+DENTAL ASSISTANT
+CERTIFIED NURSING ASSISTANT
+Nurse Practitioner
+Patient Care Technician
+Staff Accountant
+Financial Analyst	
+TELLER
+Accountant
+Business Analyst
+Account Manager
+Senior Accountant
+Accounting Manager	
+Buyer
+Senior Financial Analyst
+Program Coordinator	
+Intern
+Program Assistant
+Admissions Representative
+assistant teacher	
+Teacher
+Speech Language Pathologist
+Instructional Designer
+Test Administrator
+COORDINATOR

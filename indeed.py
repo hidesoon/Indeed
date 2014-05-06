@@ -1,6 +1,5 @@
 #Currently this creature has only short-term memory: not storing anything in a db to speed up query process
 # maybe include pandas?
-# PEP8ify?
 
 #Other
 try:
@@ -253,19 +252,19 @@ class Process(Search):
             self.pool += [word for sent in data for word in sent]
             self.backup_pool = self.pool[:]
 
-        try:
-            time.sleep(self.sleep_f()) 
-            data = self.raw_employer_data()
-            return data
-        except urllib2.URLError:
-            print "Bad url, skipping to next url."
-            return self.continue_dump(q, rec = True)
-        except socket.timeout:
-            print "Connection timed out, skipping to next url."
-            return self.continue_dump(q, rec = True)
-        except ssl.SSLError:
-            print "SSL error, skipping site."
-            return self.continue_dump(q, rec = True)
+            try:
+                time.sleep(self.sleep_f()) 
+                data = self.raw_employer_data()
+                return data
+            except urllib2.URLError:
+                print "Bad url, skipping to next url."
+                return self.continue_dump(q, rec = True)
+            except socket.timeout:
+                print "Connection timed out, skipping to next url."
+                return self.continue_dump(q, rec = True)
+            except ssl.SSLError:
+                print "SSL error, skipping site."
+                return self.continue_dump(q, rec = True)
  
     
     def dump(self, q='all',rec=False):
@@ -393,7 +392,7 @@ class Process(Search):
             self.pool = bigramify(self.pool)
             self.reset_summary()
 
-        if self.__is_bigrammed and self.pos_bigram_d == [] and pos:
+        if pos and self.__is_bigrammed and self.pos_bigram_d == []:
             self.tag_pool()
             self.pos_bigram_d = dict([((tup),(self.pos_d[tup[0]],self.pos_d[tup[1]])) for tup in self.pool])
 
@@ -461,8 +460,6 @@ class Process(Search):
     def restore_pool(self):
         self.pool = self.backup_pool
         self.reset_summary()
-
-        # may be better to store counted version instead of entire pool
     
     """
     def save(self):
