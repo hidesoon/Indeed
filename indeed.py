@@ -66,7 +66,7 @@ class Search:
             # self.clean_htmls =  self._clean_html_files()   
             # list of all indeed job url redirects
             self.job_urls = list(set(self._identify_job_urls()))
-            self.backup_job_urls = self.job_urls
+            self.backup_job_urls = self.job_urls[:]
 
             # generator for job htmls, to access need to self.job_htmls.next(), nlp clean, process, etc
             self.job_htmls = (get_html(url) for url in self.job_urls)            
@@ -184,6 +184,7 @@ def get_important_words(html):
 def bigramify(pool):
     return [(pool[idx], pool[idx+1]) for idx in range(len(pool[:-1]))]
 # would be neat to be able to see num results across several cities?
+
 #########################       Process  class       #########################
 #                                                                            #
 #                                                                            #
