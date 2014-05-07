@@ -1,4 +1,4 @@
-#Currently this creature has only short-term memory: not storing anything in a db to speed up query process
+# Currently this creature has only short-term memory: not storing anything in a db to speed up query process
 # maybe include pandas?
 
 #Other
@@ -97,7 +97,9 @@ class Search:
         return set_urls
     
     # specific to indeed search results?
-    """def _clean_html_files(self):
+    def _clean_html_files(self):
+        pass
+    """
         # take all the html tags out
         prelim_clean = [clean_html(html) for html in self.html_files]
         # remove crazy excess of \n
@@ -125,7 +127,7 @@ class Search:
             self.count = 1
         try:
             data = self.job_htmls.next()
-            #print self.count
+            print self.count
             self.count += 1
             return data
         except StopIteration:
@@ -140,7 +142,8 @@ class Search:
 
     #TODO: find the title of each job_url link and see if good to use for {link:title} to store in db
 
-    """def current_job_url(self):"""
+    def current_job_url(self):
+        pass
 
 #########################    END OF "Search" CLASS     #########################
 #                                                                              #
@@ -191,7 +194,9 @@ class Process(Search):
     """
     # will need an ability to load
     def __init__(self, terms=("data+scientist", "e"), loc="Austin%2C+TX", num_res=100, pages=1, sleep=(1,2)):
-        Search.__init__(self, terms, loc, num_res, pages)
+        # avoid unnecessary work when there is no new search to be created: no location provided as in __add__ below
+        if len(loc) > 0:
+            Search.__init__(self, terms, loc, num_res, pages)
         # words that user thinks are important
         # self.user_words = set([])
         
@@ -242,7 +247,8 @@ class Process(Search):
             n.pool = self.pool + other.pool
         return n
 
-    """def __repr__(self):"""
+    def __repr__(self):
+        pass
 
     # q = quantity/num pages, v = verbose -> print out current num, total words so far....
     # memory option? -> will check if job_url has been used recently and skip     
@@ -342,9 +348,9 @@ class Process(Search):
             f2_caps = [(w, self.wcd[w]) for w in f2_caps]
         return f2_caps
 
-    """
+    
     def store_raw_corpus(self, file_name):
-    """
+        pass
 
     def _print_out(self, h):
         out_str = "Total_words: %s \n" % self.summary["Total_Words"]
@@ -468,9 +474,8 @@ class Process(Search):
         self.pool = self.backup_pool
         self.reset_summary()
     
-    """
     def save(self):
-    """
+        pass
 
     def counts(self):
         if self.wcd == {}:
