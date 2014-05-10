@@ -299,11 +299,13 @@ class Process(Search):
         if rec: return d
 
     def _clean_pool(self):
-        for idx,word in enumerate(self.pool[:-1]):
+        for idx, word in enumerate(self.pool[:-1]):
             next_word = self.pool[idx+1]
-            if "." in word and next_word[0].isupper():
+            if "." in word:
                 self.pool[idx] = word[:-1]
-                self.pool[idx+1] = next_word.lower()
+                if next_word[0].isupper():
+                    self.pool[idx+1] = next_word.lower()
+
         self.backup_pool = self.pool[:]
 
     # pool manipulations, may want to adjust pool to particular purpose before storing
@@ -536,9 +538,6 @@ class Process(Search):
 #                                                                              #
 ##########################             oo              #########################
 
-
-
-# Analysis class --> Maybe should be external to this: allows analysis of data from other sources
 
 # Database interface
 # Once database built, would be good to have python look to see if indeed job url has been searched before (recently) and use that data rather than getting it again
