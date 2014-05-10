@@ -165,13 +165,14 @@ def get_html(link):
         page.close()
     except urllib2.HTTPError:
         print "Ignoring link: %s " %link
-
+        
     return data
 
 # also removes punctuation -- may need to refine sorts of punctuation to filter out. Not handling UNICODE in international letters
 def remove_stopwords(string, language="english"):
     stop_words = set(nltk.corpus.stopwords.words(language.lower()))
-    words = re.findall(r'[\w\+]+', string) 
+    #print string
+    words = re.findall(r'[\w\+]+\.?', string) 
     out_string = [w for w in words if w.lower() not in stop_words]
     return out_string
 
@@ -254,7 +255,7 @@ class Process(Search):
     # q = quantity/num pages, v = verbose -> print out current num, total words so far....
     # memory option? -> will check if job_url has been used recently and skip     
 
-    # dump functions: if something goes wrong, do self.continue_dump(q) and keep going
+    # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
     def _pool_data(self, data, q):
         if len(data) > 5:
             self.pool += [word for sent in data for word in sent]
@@ -288,12 +289,20 @@ class Process(Search):
             if rec: return data
             while self.count < q and data is not None:
                 data = self._pool_data(data, q)
+        self._clean_pool()
 
     def continue_dump(self, q="all", rec=False):
         self.job_urls = self.backup_job_urls[self.count+1:]
         self.job_htmls = (get_html(url) for url in self.job_urls) 
         d = self.dump(q, rec)
         if rec: return d
+
+    def _clean_pool(self):
+        for idx,word in enumerate(self.pool[:-1]):
+            if "." in word and self.pool[idx+1][0].isupper():
+                self.pool[idx] = word[:-1]
+                self.pool[idx+1] = self.pool[idx+1].lower()
+        self.backup_pool = self.pool[:]
 
     # pool manipulations, may want to adjust pool to particular purpose before storing
     def see_pool(self):
@@ -332,18 +341,18 @@ class Process(Search):
     
     def identify_NNP(self, with_counts=False):
         #returns ranked NNPs -- good enough?
-        from nltk.corpus import wordnet
+        #from nltk.corpus import wordnet
         ws = self.words()
         caps = [w for w in ws if w[0].isupper()]
-        f_caps = [w for w in caps if w not in stopwords.Capital_words]
+        f2_caps = [w for w in caps if w not in stopwords.Capital_words]
         # Need to protect a few words...("Python")... if this gets too messy need to math it ... if word falls after 
         # curvature point in distribution then toss, else keep
         # Oh, could do a user feedback system...
-        protected = ["Python", "Java", "Cloud", "Dell", "C", "R", "Go", "Oracle", "MS", "Apple", "Rails", "Ruby","Ebay",
-        "SAS", "SPSS", "Hive", "Pig"]
+        #protected = ["Python", "Java", "Cloud", "Dell", "C", "R", "Go", "Oracle", "MS", "Apple", "Rails", "Ruby","Ebay",
+        #"SAS", "SPSS", "Hive", "Pig"]
         # Relies on funny portmanteaus and neologs that companies/technologies tend to use
         # wordnet.synsets(string) returns [] if word is not found in their english dictionary
-        f2_caps = [w for w in f_caps if w in protected or wordnet.synsets(w) == [] ]
+        #f2_caps = [w for w in f_caps if w in protected or wordnet.synsets(w) == [] ]
 
         if with_counts:
             f2_caps = [(w, self.wcd[w]) for w in f2_caps]
