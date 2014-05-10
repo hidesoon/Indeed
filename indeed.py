@@ -303,7 +303,7 @@ class Process(Search):
             next_word = self.pool[idx+1]
             if "." in word and next_word[0].isupper():
                 self.pool[idx] = word[:-1]
-                next_word = next_word.lower()
+                self.pool[idx+1] = next_word.lower()
         self.backup_pool = self.pool[:]
 
     # pool manipulations, may want to adjust pool to particular purpose before storing
