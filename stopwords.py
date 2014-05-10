@@ -1,6 +1,6 @@
 
 
-Capital_words = ["Experience","Opportunity","Home","Careers","Services","Responsibilities","Terms",
+Capital_words = set(["Experience","Opportunity","Home","Careers","Services","Responsibilities","Terms",
 "Excellent","Back","Blog","English","Email","Apply","Company","Description","Strong","Information",
 "Team","Events","City","Product","Business","Share","Design","Benefits","Login","Mobile", "States",
 "Full","Requirements","Technology","Application","Education","Password","Current","Manager", "Term"
@@ -8,15 +8,15 @@ Capital_words = ["Experience","Opportunity","Home","Careers","Services","Respons
 "Please","Work","Contact","Using","Type","Copyright","Time","Use","Location","Employer","Corporate",
 "Media","Working","Online","Quality","Must","Next","Provide", "Equal","Return","See","Skip","Attach",
 "Customers","Free","Store","Message","Best","Paste","Sorry", "End","Demonstrated","Account","Previous",
-"Success","Subject","Check","Comfortable","Whenever","Since","BBQ","Username"]
+"Success","Subject","Check","Comfortable","Whenever","Since","BBQ","Username"])
 
-Lower_words = ["o","experience","site","re","e","order","please","setting","enable","1",
+Lower_words = set(["o","experience","site","re","e","order","please","setting","enable","1",
 "rsquo","lbs","staff","amp","raquo","jobs","us","www","rsquo","change","refer","access",
 "browser","need","disability","work","job","com","skills","ldquo","rdquo", "|","laquo",
-"quot"]
+"quot"])
 
 
-LONG_LIST =  [ 'a', 'able', 'about', 'above', 'abst', 'accordance', 'according', 'accordingly',
+LONG_LIST =  set([ 'a', 'able', 'about', 'above', 'abst', 'accordance', 'according', 'accordingly',
  'across', 'act', 'actually', 'added', 'adj', 'affected', 'affecting', 'affects', 'after', 'afterwards',
   'again', 'against', 'ah', 'all', 'almost', 'alone', 'along', 'already', 'also', 'although', 'always',
    'am', 'among', 'amongst', 'an', 'and', 'announce', 'another', 'any', 'anybody', 'anyhow', 'anymore',
@@ -53,4 +53,4 @@ LONG_LIST =  [ 'a', 'able', 'about', 'above', 'abst', 'accordance', 'according',
                         "she'll", 'shes', 'should', "shouldn't", 'show', 'showed', 'shown', 'showns', 'shows', 'significant', 'significantly', 'similar', 'similarly', 'since',
                          'six', 'slightly', 'so', 'some', 'somebody', 'somehow', 'someone', 'somethan', 'something', 'sometime', 'sometimes', 'somewhat', 'somewhere', 'soon',
                           'sorry', 'specifically', 'specified', 'specify', 'specifying', 'still', 'stop', 'strongly', 'sub', 'substantially', 'successfully', 'such', 'sufficiently',
-                           'suggest', 'sup', 'sure']
+                           'suggest', 'sup', 'sure'])

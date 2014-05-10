@@ -289,6 +289,7 @@ class Process(Search):
             if rec: return data
             while self.count < q and data is not None:
                 data = self._pool_data(data, q)
+
         self._clean_pool()
 
     def continue_dump(self, q="all", rec=False):
@@ -299,9 +300,10 @@ class Process(Search):
 
     def _clean_pool(self):
         for idx,word in enumerate(self.pool[:-1]):
-            if "." in word and self.pool[idx+1][0].isupper():
+            next_word = self.pool[idx+1]
+            if "." in word and next_word[0].isupper():
                 self.pool[idx] = word[:-1]
-                self.pool[idx+1] = self.pool[idx+1].lower()
+                next_word = next_word.lower()
         self.backup_pool = self.pool[:]
 
     # pool manipulations, may want to adjust pool to particular purpose before storing
