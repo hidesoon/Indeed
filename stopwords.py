@@ -4,11 +4,11 @@ Capital_words = set(["Experience","Opportunity","Home","Careers","Services","Res
 "Excellent","Back","Blog","English","Email","Apply","Company","Description","Strong","Information",
 "Team","Events","City","Product","Business","Share","Design","Benefits","Login","Mobile", "States",
 "Full","Requirements","Technology","Application","Education","Password","Current","Manager", "Term"
-"Community","Network","Sign","Jobs","Job", "Career", "Social","Finance","Tech","Legal","Name","Title",
+"Community","Network","Sign","Jobs","Job", "Career","Tech","Legal","Name","Title",
 "Please","Work","Contact","Using","Type","Copyright","Time","Use","Location","Employer","Corporate",
 "Media","Working","Online","Quality","Must","Next","Provide", "Equal","Return","See","Skip","Attach",
 "Customers","Free","Store","Message","Best","Paste","Sorry", "End","Demonstrated","Account","Previous",
-"Success","Subject","Check","Comfortable","Whenever","Since","BBQ","Username"])
+"Success","Subject","Check","Comfortable","Whenever","Since","Username"])
 
 Lower_words = set(["o","experience","site","re","e","order","please","setting","enable","1",
 "rsquo","lbs","staff","amp","raquo","jobs","us","www","rsquo","change","refer","access",
