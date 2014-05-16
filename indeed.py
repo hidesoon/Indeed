@@ -419,7 +419,7 @@ class Process(Search):
             self.pool = bigramify(self.pool)
             self.reset_summary()
 
-        if pos and self._is_bigrammed and self.pos_bigram_d == []:
+        if pos and self._is_bigrammed() and self.pos_bigram_d == []:
             self.tag_pool()
             self.pos_bigram_d = dict([((tup),(self.pos_d[tup[0]],self.pos_d[tup[1]])) for tup in self.pool])
 
