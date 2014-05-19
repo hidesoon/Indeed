@@ -14,7 +14,7 @@ import urllib2, re, collections, math, random, time, socket, ssl
 #Here
 import stopwords
 
-class Search:
+class Search(object):
     """
     """
     # pass "e" for exact search or "ne" for not exact search. 
