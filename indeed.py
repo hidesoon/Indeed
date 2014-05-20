@@ -265,6 +265,8 @@ class Process(Search):
         try:
             data = self.raw_employer_data()
             return data
+        except KeyboardInterrupt:
+            print "Stopped."
         except urllib2.URLError:
             print "Bad url, skipping to next url."
             return self.continue_dump(q, rec = True)
