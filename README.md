@@ -75,11 +75,11 @@ Non-class functions which may be useful randomly
 
 	# will soon add ability to see num of search results for same query across cities
 
-Automating the search process and getting the data in a good format for analysis:
+Automating the search Extract and getting the data in a good format for analysis:
 
-	### Process class, extracts some data out of html files: words and their freqs
+	### Extract class, extracts some data out of html files: words and their freqs
 
-	p = indeed.Process(sleep = (2,10))  # same params as Search, with addition of a sleep period to deter blocks
+	p = indeed.Extract(sleep = (2,10))  # same params as Search, with addition of a sleep period to deter blocks
 	p.dump()  # collects all the words into a 1D list for counting, etc
 	# dumping without specifying number of results to go through may (will) take a long time
 	# pass an integer to work through files a bit at a time
@@ -105,9 +105,9 @@ Automating the search process and getting the data in a good format for analysis
 	p.words() # ranked list of words -- separate from counts
 	p.pos_tags() # pos tags given in order they appear
 
-	# can add different Process objects, if locations are the same, can add to pool via dump function
+	# can add different Extract objects, if locations are the same, can add to pool via dump function
 	# if locations are different will just pool the pools for access to other functions
-	q = indeed.Process(("Java","e"))
+	q = indeed.Extract(("Java","e"))
 	q.dump()
 	c = p+q
 	c.dump()

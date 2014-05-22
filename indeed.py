@@ -1,4 +1,4 @@
-# Currently this creature has only short-term memory: not storing anything in a db to speed up query process
+# Currently this creature has only short-term memory: not storing anything in a db to speed up query Extract
 # maybe include pandas?
 
 #Other
@@ -68,7 +68,7 @@ class Search(object):
             self.job_urls = list(set(self._identify_job_urls()))
             self.backup_job_urls = self.job_urls[:]
 
-            # generator for job htmls, to access need to self.job_htmls.next(), nlp clean, process, etc
+            # generator for job htmls, to access need to self.job_htmls.next(), nlp clean, Extract, etc
             self.job_htmls = (get_html(url) for url in self.job_urls)            
         except urllib2.HTTPError:
             print "Couldn't get indeed html files, check url accuracy."
@@ -186,12 +186,12 @@ def bigramify(pool):
     return [(pool[idx], pool[idx+1]) for idx in range(len(pool[:-1]))]
 # would be neat to be able to see num results across several cities?
 
-#########################       Process  class       #########################
+#########################       Extract  class       #########################
 #                                                                            #
 #                                                                            #
 #########################             oo             ######################### 
 
-class Process(Search):
+class Extract(Search):
     """
     """
     # will need an ability to load
@@ -232,7 +232,7 @@ class Process(Search):
     def __call__(self):
         self.dump()
 
-   # add two (or More) Process objects -- may want to rethink behavior
+   # add two (or More) Extract objects -- may want to rethink behavior
     def __add__(self, other):
         new_e_ne = "ne" 
         new_loc = ""
@@ -242,7 +242,7 @@ class Process(Search):
         new_max_results = max([self.max_per_page, other.max_per_page])
         new_pages = max([self.pages, other.pages])
         # create new instance
-        n = Process((self.term_search + "+" + other.term_search, new_e_ne), loc=new_loc, num_res=new_max_results, pages=new_pages, sleep=self.sleep)
+        n = Extract((self.term_search + "+" + other.term_search, new_e_ne), loc=new_loc, num_res=new_max_results, pages=new_pages, sleep=self.sleep)
 
         # Ie, locations differ, can't make a new search
         if new_loc == "":
@@ -535,7 +535,7 @@ class Process(Search):
     option: correlation m. 
     option: 
     """
-#########################    END OF "Process" CLASS     ########################
+#########################    END OF "Extract" CLASS     ########################
 #                                                                              #
 #                                                                              #
 ##########################             oo              #########################
