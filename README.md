@@ -75,7 +75,7 @@ Non-class functions which may be useful randomly
 
 	# will soon add ability to see num of search results for same query across cities
 
-Automating the search Extract and getting the data in a good format for analysis:
+Automating the search, Extract and get the data in a good format for storage/analysis:
 
 	### Extract class, extracts some data out of html files: words and their freqs
 
