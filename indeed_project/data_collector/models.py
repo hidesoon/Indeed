@@ -19,7 +19,7 @@ class Location(models.Model):
     city = models.CharField(max_length=20)
     state = models.CharField(max_length=2)
     def __unicode__(self):
-        return u'%s, %s' (self.city, self.state)
+        return u'%s, %s' %(self.city, self.state)
 
 class Results(models.Model):
     search = models.ForeignKey(Search)
