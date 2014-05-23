@@ -529,17 +529,10 @@ class Extract(Search):
                 tags = [self.pos_d[w] for w in self.pool]
                 return tags
 
-    """
-    option: strict -> use large stopwords list to remove even more words.
-    option: store -> as csv or in db
-    option: correlation m. 
-    option: 
-    """
 #########################    END OF "Extract" CLASS     ########################
 #                                                                              #
 #                                                                              #
 ##########################             oo              #########################
 
 
-# Database interface
-# Once database built, would be good to have python look to see if indeed job url has been searched before (recently) and use that data rather than getting it again
+# Database interface in project_indeed/
