@@ -36,7 +36,7 @@ def term_locations(term,locs=get_locations_from_file()):
     queries = [indeed.Extract(terms=(term,"ne"),loc=l,pages=10) for l in locs]
     threads = [threading.Thread(target=q) for q in queries]
     grouped_threads = list(group(threads,10))
-    for group in grouped_threads:
+    for g in grouped_threads:
         # start threads, wait till finished, store in database, continue
         pass
 
