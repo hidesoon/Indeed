@@ -46,11 +46,12 @@ class Extraction_Robot(object):
         for g in grouped_threads:
             # start threads, wait till finished, store in database, continue
             for t in g:
+            #all threads started, program running.    
                 t.start()
             for t in g:
+            # wait before moving to next cluster              
                 t.join()
 
-            #all threads started, program running.    
         self.data = queries
 
     def save(self):
