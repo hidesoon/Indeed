@@ -1,5 +1,4 @@
-# Currently this creature has only short-term memory: not storing anything in a db to speed up query Extract
-# maybe include pandas?
+# Extract and pool search results around a query. Storage in db, analysis, etc in indeed_project/
 
 #Other
 try:
@@ -366,6 +365,7 @@ class Extract(Search):
 
     
     def store_raw_corpus(self, file_name):
+        # seems like it would be too messy for now
         pass
 
     def _print_out(self, h):
@@ -489,9 +489,6 @@ class Extract(Search):
     def restore_pool(self):
         self.pool = self.backup_pool
         self.reset_summary()
-    
-    def save(self):
-        pass
 
     def counts(self):
         if self.wcd == {}:
