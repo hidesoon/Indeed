@@ -38,7 +38,7 @@ class Extraction_Robot(object):
         self.locs = locs
         self.data = []
 
-    def vary_by_locations(self,term,locs=get_locations_from_file()):
+    def vary_by_locations(self):
         # options: lowers, with_filter
         queries = [indeed.Extract(terms=(self.term,self.e_ne),loc=l) for l in self.locs]
         threads = [threading.Thread(target=q) for q in queries]
