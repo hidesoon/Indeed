@@ -29,9 +29,9 @@ class Results(models.Model):
     count = models.IntegerField(default=0)
     # may be empty string when search doesn't involve pos tag
     pos = models.CharField(max_length=5)
-
     def __unicode__(self):
-        if self.pos != "":
+        # there is a pos tag
+        if self.pos != u"":
             return u'(%s, %s, %s)' %(self.word,self.count,self.pos)
         else:
             return u'(%s, %s)' %(self.word,self.count)

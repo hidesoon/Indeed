@@ -250,7 +250,7 @@ class Extract(Search):
         return n
 
     def __repr__(self):
-        pass
+        return "<term=%s, e_ne=%s, loc=%s>" %(self.term_search,self.e_ne,self.loc) 
 
     # q = quantity/num pages, v = verbose -> print out current num, total words so far....
     # memory option? -> will check if job_url has been used recently and skip     

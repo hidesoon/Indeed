@@ -31,15 +31,24 @@ def get_job_titles_from_file():
         print "Failed to open job_titles file"
 
 # hold search-term constant, vary locations
-def term_locations(term,locs=get_locations_from_file()):
-    # options: lowers, with_filter
-    queries = [indeed.Extract(terms=(term,"ne"),loc=l,pages=10) for l in locs]
-    threads = [threading.Thread(target=q) for q in queries]
-    grouped_threads = list(group(threads,10))
-    for g in grouped_threads:
-        # start threads, wait till finished, store in database, continue
-        pass
+class Extraction_Robot(object):
+    def __init__(self, term, e_ne, locs=get_locations_from_file()):
+        self.term = term
+        self.e_ne = e_ne
+        self.locs = locs
+        self.data = []
 
+    def vary_by_locations(self,term,locs=get_locations_from_file()):
+        # options: lowers, with_filter
+        queries = [indeed.Extract(terms=(self.term,self.e_ne),loc=l) for l in self.locs]
+        threads = [threading.Thread(target=q) for q in queries]
+        grouped_threads = list(group(threads,10))
+        for g in grouped_threads:
+            # start threads, wait till finished, store in database, continue
+            for t in g:
+                t.start()
+            #all threads started, program running.    
+        
 
 
 
