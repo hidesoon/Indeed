@@ -31,7 +31,7 @@ def get_job_titles_from_file():
         print "Failed to open job_titles file"
 
 # hold search-term constant, vary locations
-class Extraction_Robot(object):
+class Extraction_Robot(object)
     def __init__(self, term, e_ne, locs=get_locations_from_file()):
         self.term = term
         self.e_ne = e_ne
