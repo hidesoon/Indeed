@@ -202,29 +202,21 @@ class Extract(Search):
         # self.user_words = set([])
         
         self.default_stopwords = set(nltk.corpus.stopwords.words('english'))
-
         self.sleep = sleep
-        
         # words will swim in here linearly
         self.pool = []
-        
         # revert to original pool
         self.backup_pool = []
-
         # part of speech tagged list, based on pool -- will transform to dict
         self.pos_d = []
-
         # part of speech tagged list for bigrams -- will transform to dict
         self.pos_bigram_d = []
-        
         # summary consisting of counts, words, individual word count, etc
         self.summary = {"Total_Words":0, ("Word", "Word_Count"):[]}
-
         # the sleep distribution, lambda, neg log -- sort of humany?
         self.sleep_f = lambda : int(math.ceil(-math.log(random.random())*random.randint(sleep[0],sleep[1])))
         # word: wordCount
         self.wcd = {}
-
         self.summary_header_bool = (False, False)
    
     # allow for threading
@@ -260,7 +252,6 @@ class Extract(Search):
             self.pool += [word for sent in data for word in sent]
             self.backup_pool = self.pool[:]
             time.sleep(self.sleep_f()) 
-
         try:
             data = self.raw_employer_data()
             return data
@@ -275,7 +266,6 @@ class Extract(Search):
         except ssl.SSLError:
             print "SSL error, skipping site."
             return self.continue_dump(q, rec = True)
- 
     # may want to print self.count for each iteration while testing.
     def dump(self, q='all',rec=False):
         if q is 'all':
@@ -290,7 +280,6 @@ class Extract(Search):
             if rec: return data
             while self.count < q and data is not None:
                 data = self._pool_data(data, q)
-
         self._clean_pool()
 
     def continue_dump(self, q="all", rec=False):
@@ -306,7 +295,6 @@ class Extract(Search):
                 self.pool[idx] = word[:-1]
                 if next_word[0].isupper():
                     self.pool[idx+1] = next_word.lower()
-
         self.backup_pool = self.pool[:]
 
     # pool manipulations, may want to adjust pool to particular purpose before storing
@@ -363,7 +351,6 @@ class Extract(Search):
             f2_caps = [(w, self.wcd[w]) for w in f2_caps]
         return f2_caps
 
-    
     def store_raw_corpus(self, file_name):
         # seems like it would be too messy for now
         pass

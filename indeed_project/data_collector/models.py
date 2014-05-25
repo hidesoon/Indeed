@@ -1,7 +1,5 @@
 from django.db import models
 
-
-
 class Search(models.Model):
     date = models.DateTimeField()
     term = models.CharField(max_length=100)
@@ -35,7 +33,3 @@ class Results(models.Model):
             return u'(%s, %s, %s)' %(self.word,self.count,self.pos)
         else:
             return u'(%s, %s)' %(self.word,self.count)
-
-
-
-
