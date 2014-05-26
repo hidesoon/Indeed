@@ -33,7 +33,7 @@ def job_titles_from_file():
         print "Failed to open job_titles file"
 
 class Extraction_Robot(object):
-    def __init__(self, terms = job_titles_from_file(), e_ne, locs=locations_from_file(), pos=True, with_filter=True, lower=True, with_bigrams=False):
+    def __init__(self, e_ne, terms = job_titles_from_file(), locs=locations_from_file(), pos=True, with_filter=True, lower=True, with_bigrams=False):
         self.terms = terms
         self.e_ne = e_ne
         self.locs = locs
