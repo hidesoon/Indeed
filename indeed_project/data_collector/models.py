@@ -13,7 +13,6 @@ class Links(models.Model):
         return self.link
 
 class Location(models.Model):
-    search = models.ForeignKey(Search)
     city = models.CharField(max_length=20)
     state = models.CharField(max_length=2)
     def __unicode__(self):
@@ -21,6 +20,7 @@ class Location(models.Model):
 
 class Results(models.Model):
     search = models.ForeignKey(Search)
+    location = models.ForeignKey(Location)
     # if false is bigram
     is_bigram = models.BooleanField()
     word = models.CharField(max_length=150)

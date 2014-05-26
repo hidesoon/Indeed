@@ -8,7 +8,6 @@ except ImportError:
 
 #Native
 import urllib2, re, collections, math, random, time, socket, ssl
-# import threading
 
 #Here
 import stopwords
@@ -19,6 +18,7 @@ class Search(object):
     # pass "e" for exact search or "ne" for not exact search. 
     #                          # default because num results probably low ...and it's funny?
     def __init__(self, terms=("data+scientist","e"), loc="Austin%2C+TX", num_res=100, pages=1):
+        print loc
         self.search_term = ""
         self.e_ne = ""
         self.loc = ""
@@ -47,7 +47,7 @@ class Search(object):
             loc = loc.replace(",", "%2C")
             self.loc = loc
         #keep city, state information for database to handle
-        self.city = self.loc.split("%2C+")[0]
+        self.city = (self.loc.split("%2C+")[0]).replace("+"," ")
         self.state = self.loc.split("%2C+")[1]
 
         # look for whether exact or inexact criteria

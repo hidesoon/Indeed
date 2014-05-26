@@ -1,5 +1,6 @@
 from data_collector.models import Search,Location,Links,Results
 from django.utils import timezone
+
 import os, sys, threading
 #include access to root programs
 sys.path.insert(1, os.path.join(sys.path[0], '../'))
@@ -92,7 +93,7 @@ class Extraction_Robot(object):
                         l_db.save()
                     # each Extract object has a single location, get it and associate it to search term
                     if q.loc != "":
-                        loc_db = Location(search=s_db,city=q.city,state=q.state)
+                        loc_db = Location(city=q.city,state=q.state)
                         loc_db.save()
                     # each Extract object has a summary attribute that has all the data, modify the data pool to fit the parameters specified by user
                     # and store the data in a Results table associated to its Search table
@@ -105,12 +106,14 @@ class Extraction_Robot(object):
                             p = tup[2]
                         except:
                             p = ""
-                        r_db = Results(search=s_db,word=w,count=c,pos=p,is_bigram=self.with_bigrams)
+                        r_db = Results(search=s_db,location=loc_db,word=w,count=c,pos=p,is_bigram=self.with_bigrams)
                         r_db.save()
                 except:
                     if q.loc != "":
-                        loc_db = Location(search=s_db,city=q.city,state=q.state)
+                        loc_db = Location(city=q.city,state=q.state)
                         loc_db.save()
+                    r_db = Results(search=s_db,location=loc_db,word="N/A",count=0,pos="",is_bigram=False)
+                    r_db.save()
 
 
     def clear(self):
