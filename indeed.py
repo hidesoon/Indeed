@@ -19,9 +19,11 @@ class Search(object):
     # pass "e" for exact search or "ne" for not exact search. 
     #                          # default because num results probably low ...and it's funny?
     def __init__(self, terms=("data+scientist","e"), loc="Austin%2C+TX", num_res=100, pages=1):
-        self.term_search = ""
+        self.search_term = ""
         self.e_ne = ""
         self.loc = ""
+        self.city = ""
+        self.state = ""
         self.max_per_page = num_res
         # num results per page
         self.num_res = str(num_res)
@@ -32,10 +34,10 @@ class Search(object):
 
         # format search term for url
         if "+" in terms[0]:
-            self.term_search = terms[0].lower()
+            self.search_term = terms[0].lower()
         else:
             term = terms[0].replace(" ", "+")
-            self.term_search = term.lower()
+            self.search_term = term.lower()
 
         # format location in url
         if "+" in loc:
@@ -44,7 +46,10 @@ class Search(object):
             loc = loc.replace(" ", "+")
             loc = loc.replace(",", "%2C")
             self.loc = loc
-   
+        #keep city, state information for database to handle
+        self.city = self.loc.split("%2C+")[0]
+        self.state = self.loc.split("%2C+")[1]
+
         # look for whether exact or inexact criteria
         check_term = terms[1].lower()
         if check_term == "e":
@@ -80,9 +85,9 @@ class Search(object):
         '&sort=', '&psf=advsrch']
 
         if self.e_ne is "e":
-            url_list[1] += self.term_search
+            url_list[1] += self.search_term
         elif self.e_ne is "ne":
-            url_list[0] + self.term_search
+            url_list[0] + self.search_term
         url_list[10] += self.loc
         url_list[12] += self.num_res
 
@@ -233,7 +238,7 @@ class Extract(Search):
         new_max_results = max([self.max_per_page, other.max_per_page])
         new_pages = max([self.pages, other.pages])
         # create new instance
-        n = Extract((self.term_search + "+" + other.term_search, new_e_ne), loc=new_loc, num_res=new_max_results, pages=new_pages, sleep=self.sleep)
+        n = Extract((self.search_term + "+" + other.search_term, new_e_ne), loc=new_loc, num_res=new_max_results, pages=new_pages, sleep=self.sleep)
 
         # Ie, locations differ, can't make a new search
         if new_loc == "":
@@ -241,7 +246,7 @@ class Extract(Search):
         return n
 
     def __repr__(self):
-        return "<term=%s, e_ne=%s, loc=%s>" %(self.term_search,self.e_ne,self.loc) 
+        return "<term=%s, e_ne=%s, loc=%s>" %(self.search_term,self.e_ne,self.loc) 
 
     # q = quantity/num pages, v = verbose -> print out current num, total words so far....
     # memory option? -> will check if job_url has been used recently and skip     
@@ -322,11 +327,11 @@ class Extract(Search):
         self.reset_summary()
     # pass True if you want to use lower case pool for analysis
     def tag_pool(self):
-        self.pos_d = dict(nltk.pos_tag(list(set(self.backup_pool))))
+        self.pos_d = dict(nltk.pos_tag(list(set(self.pool))))
         
     # remove more stopwords, pass as set or list, can use default collection in stopwords.py
     def filter_stopwords(self, words='default'):
-        if type(words) is str:
+        if words is "default":
             words = self.default_stopwords
         words = set(words)
         self.pool = [w for w in self.pool if w not in words]

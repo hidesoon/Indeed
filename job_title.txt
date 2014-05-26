@@ -52,6 +52,7 @@ Graphic Designer
 Business Analyst
 Data Analyst
 Software Engineer
+Software Developer
 Program Manager
 Technical Writer
 Systems Administrator
@@ -108,3 +109,7 @@ Speech Language Pathologist
 Instructional Designer
 Test Administrator
 COORDINATOR
+Data Scientist
+Linguist
+NLP Researcher
+Computer Scientist

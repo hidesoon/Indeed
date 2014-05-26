@@ -22,7 +22,7 @@ class Location(models.Model):
 class Results(models.Model):
     search = models.ForeignKey(Search)
     # if false is bigram
-    is_unigram = models.BooleanField()
+    is_bigram = models.BooleanField()
     word = models.CharField(max_length=150)
     count = models.IntegerField(default=0)
     # may be empty string when search doesn't involve pos tag
