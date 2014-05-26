@@ -6,7 +6,6 @@ Washington, DC
 St. Paul, MN
 Seattle, WA
 Denver, CO
-Austin, TX
 Hartford, CT
 Boston, MA
 San Francisco, CA
@@ -19,6 +18,8 @@ Kansas City, MO
 Houston, TX
 Jacksonville, FL
 Orlando, FL
+Austin, TX
+Chicago, IL
 Dallas, TX
 Charlotte, NC
 Indianapolis, IN
@@ -43,7 +44,6 @@ Memphis, TN
 San Diego, CA
 Las Vegas, NV
 New York, NY
-Chicago, IL
 Miami, FL
 Detroit, MI
 Los Angeles, CA
