@@ -76,11 +76,11 @@ class Extraction_Robot(object):
             s_db.save()
             # each Extract object has multiple links, get them all and associate to the created search term
             for url in q.job_urls:
-                l_db = models.Links(search=s, link=url)
+                l_db = models.Links(search=s_db, link=url)
                 l_db.save()
             # each Extract object has a single location, get it and associate it to search term
             if q.loc != "":
-                loc_db = models.Location(search=s,city=q.city,state=q.state)
+                loc_db = models.Location(search=s_db,city=q.city,state=q.state)
                 loc_db.save()
             # each Extract object has a summary attribute that has all the data, modify the data pool to fit the parameters specified by user
             # and store the data in a Results table associated to its Search table
@@ -93,7 +93,7 @@ class Extraction_Robot(object):
                     p = tup[2]
                 except:
                     p = ""
-                r_db = models.Results(search=s,word=w,count=c,pos=p,is_bigram=self.with_bigrams)
+                r_db = models.Results(search=s_db,word=w,count=c,pos=p,is_bigram=self.with_bigrams)
                 r_db.save()
 
     def clear(self):
