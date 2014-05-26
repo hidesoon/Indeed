@@ -54,12 +54,13 @@ class Extraction_Robot(object):
 
 # hold search-terms constant, vary locations: TODO:: group the locations and feed partially, save to db as locations group is finished
 # make sure to keep the search term as a global while running whole process, this allows for the data to be stored as one search event even if
-# the extraction takes a while
+# the extraction takes a while. 
+# might be better to set up a queue and keep n constantly in process instead of waiting for groups to finish
     def vary_by_locations(self,n=3):
         if type(self.terms) is not str:
             while len(self.terms) != 1:
                 term = raw_input("Too many search terms found, supply one search term to hold: ")
-                self.terms = (term + " ").split(" ")[:-1]
+                self.terms = (term.strip()+" ").split(" ")[:-1]
             self.terms = self.terms[0]
         # n is number of threads per group
         # options: lowers, with_filter
@@ -85,26 +86,32 @@ class Extraction_Robot(object):
             for q in self.data:
                 # save data around Search term for each Extract object in self.data
                 # each Extract object has multiple links, get them all and associate to the created search term
-                for url in q.job_urls:
-                    l_db = Links(search=s_db, link=url)
-                    l_db.save()
-                # each Extract object has a single location, get it and associate it to search term
-                if q.loc != "":
-                    loc_db = Location(search=s_db,city=q.city,state=q.state)
-                    loc_db.save()
-                # each Extract object has a summary attribute that has all the data, modify the data pool to fit the parameters specified by user
-                # and store the data in a Results table associated to its Search table
-                q.pool_summary(pos=self.pos, with_filter=self.with_filter, lower=self.lower, with_bigrams=self.with_bigrams)
-                data = q.summary[('Word', 'Word_Count', 'POS_Tag')]
-                for tup in data:
-                    w = str(tup[0])
-                    c = tup[1]
-                    try:
-                        p = tup[2]
-                    except:
-                        p = ""
-                    r_db = Results(search=s_db,word=w,count=c,pos=p,is_bigram=self.with_bigrams)
-                    r_db.save()
+                try:
+                    for url in q.job_urls:
+                        l_db = Links(search=s_db, link=url)
+                        l_db.save()
+                    # each Extract object has a single location, get it and associate it to search term
+                    if q.loc != "":
+                        loc_db = Location(search=s_db,city=q.city,state=q.state)
+                        loc_db.save()
+                    # each Extract object has a summary attribute that has all the data, modify the data pool to fit the parameters specified by user
+                    # and store the data in a Results table associated to its Search table
+                    q.pool_summary(pos=self.pos, with_filter=self.with_filter, lower=self.lower, with_bigrams=self.with_bigrams)
+                    data = q.summary[('Word', 'Word_Count', 'POS_Tag')]
+                    for tup in data:
+                        w = str(tup[0])
+                        c = tup[1]
+                        try:
+                            p = tup[2]
+                        except:
+                            p = ""
+                        r_db = Results(search=s_db,word=w,count=c,pos=p,is_bigram=self.with_bigrams)
+                        r_db.save()
+                except:
+                    if q.loc != "":
+                        loc_db = Location(search=s_db,city=q.city,state=q.state)
+                        loc_db.save()
+
 
     def clear(self):
         self.data = []
