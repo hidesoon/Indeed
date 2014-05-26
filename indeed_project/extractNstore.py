@@ -54,8 +54,9 @@ class Extraction_Robot(object):
     def vary_by_locations(self,n=5):
         if type(self.terms) is not str:
             while len(self.terms) != 1:
-                self.terms = raw_input("Too many search terms found, supply one search term to hold: ")
-
+                term = raw_input("Too many search terms found, supply one search term to hold: ")
+                self.terms = (term + " ").split(" ")[:-1]
+            self.terms = self.terms[0]
         # n is number of threads per group
         # options: lowers, with_filter
         queries = [indeed.Extract(terms=(self.terms,self.e_ne),loc=l) for l in self.locs]
