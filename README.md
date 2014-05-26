@@ -116,5 +116,5 @@ Automating the search, Extract and get the data in a good format for storage/ana
 	p.identify_NNP(counts=True) # includes counts in tuple in list
  
 
-	# add ability to store results in a mysql dB
+	# Database interface in indeed_project/
 	#

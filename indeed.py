@@ -12,13 +12,13 @@ import urllib2, re, collections, math, random, time, socket, ssl
 #Here
 import stopwords
 
+# TODO: consolidate printout to a function 
 class Search(object):
     """
     """
     # pass "e" for exact search or "ne" for not exact search. 
     #                          # default because num results probably low ...and it's funny?
     def __init__(self, terms=("data+scientist","e"), loc="Austin%2C+TX", num_res=100, pages=1):
-        print loc
         self.search_term = ""
         self.e_ne = ""
         self.loc = ""
