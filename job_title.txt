@@ -110,6 +110,3 @@ Instructional Designer
 Test Administrator
 COORDINATOR
 Data Scientist
-Linguist
-NLP Researcher
-Computer Scientist
