@@ -40,7 +40,7 @@ class Search(object):
             self.search_term = term.lower()
 
         # format location in url
-        temp = [i.strip() for i in loc.replace(" ",",").split(",")]
+        temp = [i.strip() for i in loc.split(",")]
         temp = filter(lambda i : i != "", temp)
         if len(temp) != 2 or len(temp[1]) != 2: 
             raise ValueError, ("Check location formatting, need city followed by two-letter state")
@@ -49,7 +49,7 @@ class Search(object):
         #keep city, state information for database to handle
         self.city = temp[0]
         self.state = temp[1]
-        self.loc = "%2C+".join(temp)
+        self.loc = ("%2C+".join(temp)).replace(" ","+")
 
         # look for whether exact or inexact criteria
         check_term = terms[1].lower()

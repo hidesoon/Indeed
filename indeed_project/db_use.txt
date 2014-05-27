@@ -4,26 +4,14 @@ In terminal:
 python manage.py shell
 # brought into interactive shell 
 
-from data_collector.models import Results,Links,Location,Search
+from data_collector import Results,Links,Location,Search
 
 In [5]: Results.objects.filter(location__city="Austin")
-Out[5]: [<Results: (data, 119, NNS)>, <Results: (Data, 74, NNP)>, <Results: (Austin, 64, NNP)>,
-<Results: (Scientist, 56, NNP)>, <Results: (solutions, 44, NNS)>, <Results: (business, 44, NN)>,
-<Results: (TX, 43, NNP)>, <Results: (SQL, 43, NNP)>, <Results: (team, 41, VBP)>, <Results: (tools, 29, NNS)>,
-<Results: (analytics, 28, NNS)>, <Results: (position, 25, NN)>, <Results: (using, 25, VBG)>, 
-<Results: (years, 24, NNS)>, <Results: (software, 23, NN)>, <Results: (advanced, 22, VBD)>, 
-<Results: (Revionics, 22, NNP)>, <Results: (BI, 22, NNP)>, <Results: (new, 21, JJ)>,
-<Results: (ebay, 21, NN)>, '...(remaining elements truncated)...']
+Out[5]: [<Results: (data, 119, NNS)>, <Results: (Data, 74, NNP)>, <Results: (Austin, 64, NNP)>, <Results: (Scientist, 56, NNP)>, <Results: (solutions, 44, NNS)>, <Results: (business, 44, NN)>, <Results: (TX, 43, NNP)>, <Results: (SQL, 43, NNP)>, <Results: (team, 41, VBP)>, <Results: (tools, 29, NNS)>, <Results: (analytics, 28, NNS)>, <Results: (position, 25, NN)>, <Results: (using, 25, VBG)>, <Results: (years, 24, NNS)>, <Results: (software, 23, NN)>, <Results: (advanced, 22, VBD)>, <Results: (Revionics, 22, NNP)>, <Results: (BI, 22, NNP)>, <Results: (new, 21, JJ)>, <Results: (ebay, 21, NN)>, '...(remaining elements truncated)...']
 
 
 In [6]: Results.objects.filter(pos="NNP")
-Out[6]: [<Results: (Data, 449, NNP)>, <Results: (Scientist, 446, NNP)>, <Results: (CA, 219, NNP)>,
-<Results: (Laboratory, 152, NNP)>, <Results: (Posted, 142, NNP)>, <Results: (Clinical, 141, NNP)>,
-<Results: (San, 123, NNP)>, <Results: (Hadoop, 109, NNP)>, <Results: (Engineering, 106, NNP)>,
-<Results: (Engineer, 97, NNP)>, <Results: (Big, 93, NNP)>, <Results: (Science, 92, NNP)>, 
-<Results: (Us, 90, NNP)>, <Results: (Python, 86, NNP)>, <Results: (Software, 85, NNP)>,
-<Results: (Inc, 84, NNP)>, <Results: (Java, 83, NNP)>, <Results: (Senior, 82, NNP)>, <Results: (R, 76, NNP)>,
-<Results: (New, 75, NNP)>, '...(remaining elements truncated)...']
+Out[6]: [<Results: (Data, 449, NNP)>, <Results: (Scientist, 446, NNP)>, <Results: (CA, 219, NNP)>, <Results: (Laboratory, 152, NNP)>, <Results: (Posted, 142, NNP)>, <Results: (Clinical, 141, NNP)>, <Results: (San, 123, NNP)>, <Results: (Hadoop, 109, NNP)>, <Results: (Engineering, 106, NNP)>, <Results: (Engineer, 97, NNP)>, <Results: (Big, 93, NNP)>, <Results: (Science, 92, NNP)>, <Results: (Us, 90, NNP)>, <Results: (Python, 86, NNP)>, <Results: (Software, 85, NNP)>, <Results: (Inc, 84, NNP)>, <Results: (Java, 83, NNP)>, <Results: (Senior, 82, NNP)>, <Results: (R, 76, NNP)>, <Results: (New, 75, NNP)>, '...(remaining elements truncated)...']
 
 In [7]: len(Results.objects.filter(pos="NNP"))
 Out[7]: 209387
