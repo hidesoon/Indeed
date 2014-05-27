@@ -4,7 +4,7 @@ In terminal:
 python manage.py shell
 # brought into interactive shell 
 
-from data_collector import Results,Links,Location,Search
+from data_collector.models import Results,Links,Location,Search
 
 In [5]: Results.objects.filter(location__city="Austin")
 Out[5]: [<Results: (data, 119, NNS)>, <Results: (Data, 74, NNP)>, <Results: (Austin, 64, NNP)>,
