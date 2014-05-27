@@ -2,8 +2,9 @@ from data_collector.models import Search,Location,Links,Results
 from django.utils import timezone
 
 import os, sys, threading
+Distance_to_root = "../"
 #include access to root programs
-sys.path.insert(1, os.path.join(sys.path[0], '../'))
+sys.path.insert(1, os.path.join(sys.path[0], Distance_to_root))
 
 import indeed
 
@@ -13,25 +14,17 @@ def group(lst, n):
     val = lst[i:i+n]
     yield tuple(val)
           
-def locations_from_file():
+def file_grabber(f):
     try:
-        f = open("../locations.txt")
+        f = open(Distance_to_root+f)
         f_s = f.read().strip()
         f_s = [i.strip() for i in f_s.split('\n')]
         f.close()
         return f_s
     except:
-        print "Failed to open locations file"
+        print "Failed to open %s file" %f
 
-def job_titles_from_file():
-    try:
-        f = open("../job_title.txt")
-        f_s = f.read().strip()
-        f_s = [i.strip() for i in f_s.split('\n')]
-        f.close()
-        return f_s
-    except:
-        print "Failed to open job_titles file"
+
 
 # Little robot to extract all the data from indeed and store it in a database set up in the django file
 # First function to be able to search according to a variation on location, holding the search term constant
@@ -42,7 +35,7 @@ def job_titles_from_file():
 
 # will need to have it check recently gathered data or write a report for user to keep track of, don't want duplicated data in db
 class Extraction_Robot(object):
-    def __init__(self, terms = job_titles_from_file(), e_ne = "e", locs=locations_from_file(), pos=True, with_filter=True, lower=True, with_bigrams=False):
+    def __init__(self, terms = file_grabber("job_titles.txt"), e_ne = "e", locs=file_grabber("locations.txt"), pos=True, with_filter=True, lower=True, with_bigrams=False):
         self.terms = terms
         self.e_ne = e_ne
         self.locs = locs
@@ -58,7 +51,7 @@ class Extraction_Robot(object):
 # the extraction takes a while. 
 # might be better to set up a queue and keep n constantly in process instead of waiting for groups to finish
     def vary_by_locations(self,n=3):
-        if type(self.terms) is not str:
+        if not isinstance(self.terms,basestring):
             while len(self.terms) != 1:
                 term = raw_input("Too many search terms found, supply one search term to hold: ")
                 self.terms = (term.strip()+" ").split(" ")[:-1]

@@ -281,7 +281,7 @@ class Extract(Search):
             while data is not None:
                 # might want to include options for identifying information on data by data basis, might need a dict with {indeed url : cleaned html}
                 data = self._pool_data(data, q)
-        elif type(q) is int:
+        elif isinstance(q,int):
             data = self.raw_employer_data()
             if rec: return data
             while self.count < q and data is not None:
@@ -379,9 +379,9 @@ class Extract(Search):
             return ("Word", "Word_Count", "Log_Freqs", "POS_Tag") 
 
     def _is_bigrammed(self):
-        if type(self.pool[0]) is tuple:
+        if isinstance(self.pool[0],tuple):
             return True
-        elif type(self.pool[0]) is str:
+        elif  isinstance(self.pool[0],basestring):
             return False
                             # returning a string if you must store results in txt file -> interface with db would be better
     # rename to just 'summary' ?               #the log freq of ea word, the part of speech of ea. word
