@@ -1,6 +1,6 @@
 To interface with the database and submit queries through Django
 
-from terminal:
+In terminal:
 python manage.py shell
 # brought into interactive shell 
 

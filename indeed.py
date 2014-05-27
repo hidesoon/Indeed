@@ -40,15 +40,16 @@ class Search(object):
             self.search_term = term.lower()
 
         # format location in url
-        if "+" in loc:
-            self.loc = loc
-        else:
-            loc = loc.replace(" ", "+")
-            loc = loc.replace(",", "%2C")
-            self.loc = loc
+        temp = [i.strip() for i in loc.replace(" ",",").split(",")]
+        temp = filter(lambda i : i != "", temp)
+        if len(temp) != 2 or len(temp[1]) != 2: 
+            raise ValueError, ("Check location formatting, need city followed by two-letter state")
+        temp[1] = temp[1].upper()
+            
         #keep city, state information for database to handle
-        self.city = (self.loc.split("%2C+")[0]).replace("+"," ")
-        self.state = self.loc.split("%2C+")[1]
+        self.city = temp[0]
+        self.state = temp[1]
+        self.loc = "%2C+".join(temp)
 
         # look for whether exact or inexact criteria
         check_term = terms[1].lower()
@@ -57,7 +58,7 @@ class Search(object):
         elif check_term == "ne":
             self.e_ne = "ne"
         else:
-            raise SyntaxError, ("Need 'e' or 'ne' parameter for search")
+            raise ValueError, ("Need 'e' (exact) or 'ne' (inexact) parameter for search")
 
         # make set of urls for search from indeed.com
         self.urls = self._construct_URL()
