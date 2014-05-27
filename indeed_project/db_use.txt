@@ -1,4 +1,4 @@
-To interface with the database and submit queries through Django, make sure .db file is in this level if using sqlite
+To interface with the database and submit queries through Django, make sure db.file is in this level if using sqlite
 
 In terminal:
 python manage.py shell
