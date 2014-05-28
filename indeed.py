@@ -35,7 +35,6 @@ class Search(object):
         self.job_urls = set([])
         # Html files of the job postings
         self.job_htmls = []
-
         # counter for times next is called on generator
         self.count = None
 
@@ -167,7 +166,6 @@ def get_important_words(html):
 
 def bigramify(pool):
     return [(pool[idx], pool[idx+1]) for idx in range(len(pool[:-1]))]
-# would be neat to be able to see num results across several cities?
 
 #########################       Extract  class       #########################
 #                                                                            #
@@ -226,10 +224,7 @@ class Extract(Search):
         return n
 
     def __repr__(self):
-        return "<term=%s, e_ne=%s, loc=%s, total_words=%s>" %(self.search_term,self.e_ne,self.printable_loc,self.summary["Total_Words"]) 
-
-    # q = quantity/num pages, v = verbose -> print out current num, total words so far....
-    # memory option? -> will check if job_url has been used recently and skip     
+        return "<term=%s,e_ne=%s,loc=%s>" %(self.search_term,self.e_ne,self.printable_loc) 
 
     # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
     def _pool_data(self, data, q):
@@ -359,7 +354,6 @@ class Extract(Search):
     # rename to just 'summary' ?               #the log freq of ea word, the part of speech of ea. word
     def pool_summary(self, print_out=False, log_freqs=False, pos=False, with_filter=False, lower=False, with_bigrams=False):
         # self.summary = {"Total_Words" : N , (nth, "Word_Count") : [(word1,count1),(word2,count2),(word3,count3)...(wordn,countn)] }
-        # very primitive summary for all the words
         # the most basic (all params False) stores word : wordCount in self.summary.
         
         # current pool is bigrammed but user doesn't want it to be
@@ -495,6 +489,5 @@ class Extract(Search):
 #                                                                              #
 #                                                                              #
 ##########################             oo              #########################
-
 
 # Database interface in project_indeed/

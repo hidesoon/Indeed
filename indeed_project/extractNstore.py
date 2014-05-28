@@ -43,7 +43,7 @@ class Extraction_Robot(object):
         self.with_filter=with_filter
         self.lower = lower
         self.with_bigrams = with_bigrams
-        # will hold each Extract object to manipulate and store in db, will be cleaned out to save on memory
+        # will hold each Extract object to manipulate and store in db
         self.data = []
 
 # hold search-terms constant, vary locations: TODO:: group the locations and feed partially, save to db as locations group is finished
@@ -76,8 +76,10 @@ class Extraction_Robot(object):
         
         if const is "search_term":
             s_db = Search(date=timezone.now(),term=self.data[0].search_term)
+            print s_db
             s_db.save()
             for q in self.data:
+                print q
                 # save data around Search term for each Extract object in self.data
                 # each Extract object has multiple links, get them all and associate to the created search term
                 try:
@@ -96,7 +98,7 @@ class Extraction_Robot(object):
                         w = str(tup[0])
                         c = tup[1]
                         try:
-                            p = tup[2]
+                            p = str(tup[2])
                         except:
                             p = ""
                         r_db = Results(search=s_db,location=loc_db,word=w,count=c,pos=p,is_bigram=self.with_bigrams)
@@ -107,7 +109,6 @@ class Extraction_Robot(object):
                         loc_db.save()
                     r_db = Results(search=s_db,location=loc_db,word="N/A",count=0,pos="",is_bigram=False)
                     r_db.save()
-
 
     def clear(self):
         self.data = []
