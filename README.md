@@ -1,7 +1,8 @@
 This project is currently under development, feel free to poke around and use what there is though.
 
+The indeed.py file is for extracting all job postings for a search term in a particular location and giving a basic summary of the results. It'll give the word:wordCount, with options to: make the 'word' bigrams, add the part of speech per word, find the local frequencies of the words and adjust the data according to a few filters. There is a suggested database architecture and storage functions in the project directory. 
 
-
+To use:
 
 
 Make sure nltk is installed and the stopwords & wordnet corpus are downloaded, if you don't have nltk:
