@@ -5,10 +5,8 @@ try:
     import nltk
 except ImportError:
      print "Sorry, I need nltk to work at the moment. "
-
 #Native
 import urllib2, re, collections, math, random, time, socket, ssl
-
 #Here
 import stopwords
 
@@ -16,19 +14,28 @@ import stopwords
 class Search(object):
     """
     """
-    # pass "e" for exact search or "ne" for not exact search. 
+    # pass "e" for exact search or "ne" for inexact search. 
     #                          # default because num results probably low ...and it's funny?
     def __init__(self, terms=("data+scientist","e"), loc="Austin%2C+TX", num_res=100, pages=1):
+        #url-ready form of search term
         self.search_term = ""
         self.e_ne = ""
+        # url-ready form of location
         self.loc = ""
+        #readable location variables
         self.city = ""
         self.state = ""
         self.max_per_page = num_res
-        # num results per page
         self.num_res = str(num_res)
         # number of pages for search result 
         self.pages = pages
+        # Indeed's htmls files returned from search
+        self.html_files = []
+        # Indeed's job-url redirects to job posting
+        self.job_urls = set([])
+        # Html files of the job postings
+        self.job_htmls = []
+
         # counter for times next is called on generator
         self.count = None
 
@@ -59,21 +66,15 @@ class Search(object):
             self.e_ne = "ne"
         else:
             raise ValueError, ("Need 'e' (exact) or 'ne' (inexact) parameter for search")
-
         # make set of urls for search from indeed.com
         self.urls = self._construct_URL()
-        
         try:
             # get html file associated with search from indeed.com
-            self.html_files = [urllib2.urlopen(url).read() for url in self.urls]
-
-            # clean the surface search  
-            # self.clean_htmls =  self._clean_html_files()   
+            self.html_files = [urllib2.urlopen(url).read() for url in self.urls]  
             # list of all indeed job url redirects
             self.job_urls = list(set(self._identify_job_urls()))
             self.backup_job_urls = self.job_urls[:]
-
-            # generator for job htmls, to access need to self.job_htmls.next(), nlp clean, Extract, etc
+            # generator for job htmls, to access need to self.job_htmls.next(), nlp clean, process, etc
             self.job_htmls = (get_html(url) for url in self.job_urls)            
         except urllib2.HTTPError:
             print "Couldn't get indeed html files, check url accuracy."
@@ -100,27 +101,8 @@ class Search(object):
         slices = range(step_size,end,step_size)
         set_urls = [out_url] + [out_url+"&start="+str(i) for i in slices]
         return set_urls
-    
-    # specific to indeed search results?
-    def _clean_html_files(self):
-        pass
-    """
-        # take all the html tags out
-        prelim_clean = [clean_html(html) for html in self.html_files]
-        # remove crazy excess of \n
-        cleaned_html = []
-        for f in prelim_clean:
-            out_html = filter(lambda s: s != "", f.split('\n'))
-            out_html = [i.strip() for i in out_html]
-            cleaned_html.append(out_html)
-
-        # list of lists, each element in list is a list where each element is a sentence or empty space
-        return cleaned_html"""
-    # remove stopwords from given container
-
 
     def _identify_job_urls(self):
-        
         raw_redirect_links = [re.findall(r'\/rc\/clk\?jk=[\w]+"',data) for data in self.html_files]
         flatten_redirect_links = [link[:-1] for page in raw_redirect_links for link in page]            
         indeedified = ["http://indeed.com"+ s for s in flatten_redirect_links]
@@ -132,7 +114,6 @@ class Search(object):
             self.count = 1
         try:
             data = self.job_htmls.next()
-            print self.count
             self.count += 1
             return data
         except StopIteration:
@@ -146,9 +127,6 @@ class Search(object):
             return None
 
     #TODO: find the title of each job_url link and see if good to use for {link:title} to store in db
-
-    def current_job_url(self):
-        pass
 
 #########################    END OF "Search" CLASS     #########################
 #                                                                              #
@@ -206,7 +184,7 @@ class Extract(Search):
             Search.__init__(self, terms, loc, num_res, pages)
         # words that user thinks are important
         # self.user_words = set([])
-        
+        self.printable_loc = self.city + ", " + self.state
         self.default_stopwords = set(nltk.corpus.stopwords.words('english'))
         self.sleep = sleep
         # words will swim in here linearly
@@ -227,6 +205,7 @@ class Extract(Search):
    
     # allow for threading
     def __call__(self):
+        print  self.printable_loc+'\n'
         self.dump()
 
    # add two (or More) Extract objects -- may want to rethink behavior
@@ -247,7 +226,7 @@ class Extract(Search):
         return n
 
     def __repr__(self):
-        return "<term=%s, e_ne=%s, loc=%s>" %(self.search_term,self.e_ne,self.loc) 
+        return "<term=%s, e_ne=%s, loc=%s, total_words=%s>" %(self.search_term,self.e_ne,self.printable_loc,self.summary["Total_Words"]) 
 
     # q = quantity/num pages, v = verbose -> print out current num, total words so far....
     # memory option? -> will check if job_url has been used recently and skip     
@@ -255,6 +234,7 @@ class Extract(Search):
     # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
     def _pool_data(self, data, q):
         if len(data) > 5:
+            print self.count
             self.pool += [word for sent in data for word in sent]
             self.backup_pool = self.pool[:]
             time.sleep(self.sleep_f()) 
@@ -339,23 +319,15 @@ class Extract(Search):
         self.reset_summary()
     
     def identify_NNP(self, with_counts=False):
-        #returns ranked NNPs -- good enough?
-        #from nltk.corpus import wordnet
+        #returns NNPs via crude detection. Will build refinement after data pool large enough.
+        #note: from nltk.corpus import wordnet is an english dict
         ws = self.words()
         caps = [w for w in ws if w[0].isupper()]
-        f2_caps = [w for w in caps if w not in stopwords.Capital_words]
-        # Need to protect a few words...("Python")... if this gets too messy need to math it ... if word falls after 
-        # curvature point in distribution then toss, else keep
-        # Oh, could do a user feedback system...
-        #protected = ["Python", "Java", "Cloud", "Dell", "C", "R", "Go", "Oracle", "MS", "Apple", "Rails", "Ruby","Ebay",
-        #"SAS", "SPSS", "Hive", "Pig"]
-        # Relies on funny portmanteaus and neologs that companies/technologies tend to use
-        # wordnet.synsets(string) returns [] if word is not found in their english dictionary
-        #f2_caps = [w for w in f_caps if w in protected or wordnet.synsets(w) == [] ]
+        f_caps = [w for w in caps if w not in stopwords.Capital_words]
 
         if with_counts:
-            f2_caps = [(w, self.wcd[w]) for w in f2_caps]
-        return f2_caps
+            f_caps = [(w, self.wcd[w]) for w in f_caps]
+        return f_caps
 
     def store_raw_corpus(self, file_name):
         # seems like it would be too messy for now
@@ -381,7 +353,7 @@ class Extract(Search):
     def _is_bigrammed(self):
         if isinstance(self.pool[0],tuple):
             return True
-        elif  isinstance(self.pool[0],basestring):
+        elif isinstance(self.pool[0],basestring):
             return False
                             # returning a string if you must store results in txt file -> interface with db would be better
     # rename to just 'summary' ?               #the log freq of ea word, the part of speech of ea. word
