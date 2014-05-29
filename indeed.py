@@ -46,16 +46,7 @@ class Search(object):
             self.search_term = term.lower()
 
         # format location in url
-        temp = [i.strip() for i in loc.split(",")]
-        temp = filter(lambda i : i != "", temp)
-        if len(temp) != 2 or len(temp[1]) != 2: 
-            raise ValueError, ("Check location formatting, need city followed by two-letter state")
-        temp[1] = temp[1].upper()
-            
-        #keep city, state information for database to handle
-        self.city = temp[0]
-        self.state = temp[1]
-        self.loc = ("%2C+".join(temp)).replace(" ","+")
+        self.city, self.state, self.loc = location_query(loc)
 
         # look for whether exact or inexact criteria
         check_term = terms[1].lower()
@@ -131,6 +122,18 @@ class Search(object):
 #                                                                              #
 #                                                                              #
 ##########################             oo              #########################
+def format_location(location_query):
+        temp = [i.strip() for i in location_query.split(",")]
+        temp = filter(lambda i : i != "", temp)
+        if len(temp) != 2 or len(temp[1]) != 2: 
+            raise ValueError, ("Check location formatting, need city followed by two-letter state")
+        temp[1] = temp[1].upper()
+        city = " ".join([i[0].upper()+i[1:] for i in temp[0].split(" ")])  
+        temp[0] = city        
+        #keep city, state information for database to handle
+        state = temp[1]
+        url_formatted = ("%2C+".join(temp)).replace(" ","+")
+        return(city, state, url_formatted)
 
 def clean_html(html_file):
     return nltk.util.clean_html(html_file)
@@ -246,6 +249,9 @@ class Extract(Search):
             return self.continue_dump(q, rec = True)
         except ssl.SSLError:
             print "SSL error, skipping site."
+            return self.continue_dump(q, rec = True)
+        except:
+            print "Probably some other SSL error."
             return self.continue_dump(q, rec = True)
     # may want to print self.count for each iteration while testing.
     def dump(self, q='all',rec=False):
