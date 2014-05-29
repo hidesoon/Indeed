@@ -21,7 +21,7 @@ class Location(models.Model):
 class Results(models.Model):
     search = models.ForeignKey(Search)
     location = models.ForeignKey(Location)
-    # if false is bigram
+    # if true is bigram
     is_bigram = models.BooleanField()
     word = models.CharField(max_length=150)
     count = models.IntegerField(default=0)
