@@ -47,8 +47,6 @@ class Extraction_Robot(object):
         self.data = []
 
 # hold search-terms constant, vary locations: TODO:: group the locations and feed partially, save to db as locations group is finished
-# make sure to keep the search term as a global while running whole process, this allows for the data to be stored as one search event even if
-# the extraction takes a while. 
 # might be better to set up a queue and keep n constantly in process instead of waiting for groups to finish
     def vary_by_locations(self,n=3):
         if not isinstance(self.terms,basestring):
@@ -92,8 +90,8 @@ class Extraction_Robot(object):
                         loc_db.save()
                     # each Extract object has a summary attribute that has all the data, modify the data pool to fit the parameters specified by user
                     # and store the data in a Results table associated to its Search table
-                    q.pool_summary(pos=self.pos, with_filter=self.with_filter, lower=self.lower, with_bigrams=self.with_bigrams)
-                    data = q.summary[('Word', 'Word_Count', 'POS_Tag')]
+                    summary = q.pool_summary(pos=self.pos, with_filter=self.with_filter, lower=self.lower, with_bigrams=self.with_bigrams)
+                    data = summary[('Word', 'Word_Count', 'POS_Tag')]
                     for tup in data:
                         w = str(tup[0])
                         c = tup[1]

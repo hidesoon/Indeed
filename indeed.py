@@ -46,7 +46,7 @@ class Search(object):
             self.search_term = term.lower()
 
         # format location in url
-        self.city, self.state, self.loc = location_query(loc)
+        self.city, self.state, self.loc = format_location(loc)
 
         # look for whether exact or inexact criteria
         check_term = terms[1].lower()
@@ -133,7 +133,7 @@ def format_location(location_query):
         #keep city, state information for database to handle
         state = temp[1]
         url_formatted = ("%2C+".join(temp)).replace(" ","+")
-        return(city, state, url_formatted)
+        return (city, state, url_formatted)
 
 def clean_html(html_file):
     return nltk.util.clean_html(html_file)
@@ -443,6 +443,8 @@ class Extract(Search):
 
         if print_out:
             return self._print_out(new_h)
+        else:
+            return self.summary
     
     def summary_data(self):
         return self.summary
