@@ -6,7 +6,7 @@ Distance_to_root = "../"
 #include access to root programs
 sys.path.insert(1, os.path.join(sys.path[0], Distance_to_root))
 
-import indeed
+import indeed, encouragement
 
 # generator for grouping n tuples in list, will collect all possible
 def group(lst, n):
@@ -67,7 +67,7 @@ class Extraction_Robot(object):
                 t.join()
         self.data = queries    
         self.save_to_db(const="search_term")
-        print "I made it through!"
+        print encouragement.get_encouragement()
 
     def save_to_db(self,const):
         # store in db, uses self.data Extract objects, iterate through and generate the appropriate injections for the db
