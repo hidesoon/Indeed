@@ -243,7 +243,6 @@ class Extract(Search):
             print "Connection timed out, skipping to next url."
             self.continue_dump(q, rec = True)
             self._pool_next_step()
-
         except ssl.SSLError:
             print "SSL error, skipping site."
             self.continue_dump(q, rec = True)
@@ -253,7 +252,7 @@ class Extract(Search):
             self.continue_dump(q, rec = True)
             self._pool_next_step()
 
-    def _pool_data(self, data, q):
+    def _pool_data(self, data):
         if len(data) > 5:
             print self.count
             self.pool += [word for sent in data for word in sent]
@@ -268,11 +267,11 @@ class Extract(Search):
             data = self.raw_employer_data()
             while data is not None:
                 # might want to include options for identifying information on data by data basis, might need a dict with {indeed url : cleaned html}
-                data = self._pool_data(data, q)
+                data = self._pool_data(data)
         elif isinstance(q,int):
             data = self.raw_employer_data()
             while self.count < q and data is not None:
-                data = self._pool_data(data, q)
+                data = self._pool_data(data)
         self._clean_pool()
 
     def continue_dump(self, q="all", rec=False):
@@ -280,7 +279,6 @@ class Extract(Search):
         self.job_htmls = (get_html(url) for url in self.job_urls) 
         if not rec:
             self.dump(q)
-
 
     def _clean_pool(self):
         for idx, word in enumerate(self.pool[:-1]):
