@@ -226,13 +226,8 @@ class Extract(Search):
     def __repr__(self):
         return "<term=%s,e_ne=%s,loc=%s>" %(self.search_term,self.e_ne,self.printable_loc) 
 
-    # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
-    def _pool_data(self, data, q):
-        if len(data) > 5:
-            print self.count
-            self.pool += [word for sent in data for word in sent]
-            self.backup_pool = self.pool[:]
-            time.sleep(self.sleep_f()) 
+    # get the next piece of data using a safety net
+    def _safety_net(self):
         try:
             data = self.raw_employer_data()
             return data
@@ -240,37 +235,55 @@ class Extract(Search):
             print "\nStopped."
         except urllib2.URLError:
             print "Bad url, skipping to next url."
-            return self.continue_dump(q, rec = True)
+            self.continue_dump(rec = True)
+            self.count += 1
+            return self._safety_net()
         except socket.timeout:
             print "Connection timed out, skipping to next url."
-            return self.continue_dump(q, rec = True)
+            self.continue_dump(rec = True)
+            self.count += 1
+            return self._safety_net()
         except ssl.SSLError:
             print "SSL error, skipping site."
-            return self.continue_dump(q, rec = True)
+            self.continue_dump(rec = True)
+            self.count += 1
+            return self._safety_net()
         except:
             print "Probably some other SSL error."
-            return self.continue_dump(q, rec = True)
+            self.continue_dump(rec = True)
+            self.count += 1
+            return self._safety_net()
+    # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
+    def _pool_data(self, data):
+        if len(data) > 5:
+            print self.count
+            self.pool += [word for sent in data for word in sent]
+            self.backup_pool = self.pool[:]
+            time.sleep(self.sleep_f()) 
+
     # may want to print self.count for each iteration while testing.
     def dump(self, q='all',rec=False):
         if q is 'all':
             # huge dump into the pool 
-            data = self.raw_employer_data()
-            if rec: return data
+            data = self._safety_net()
+            
             while data is not None:
+                self._pool_data(data)
                 # might want to include options for identifying information on data by data basis, might need a dict with {indeed url : cleaned html}
-                data = self._pool_data(data, q)
+                data = self._safety_net()
         elif isinstance(q,int):
-            data = self.raw_employer_data()
-            if rec: return data
+            data = self._safety_net()
             while self.count < q and data is not None:
-                data = self._pool_data(data, q)
+                self._pool_data(data)
+                data = self._safety_net()
         self._clean_pool()
 
     def continue_dump(self, q="all", rec=False):
         self.job_urls = self.backup_job_urls[self.count+1:]
         self.job_htmls = (get_html(url) for url in self.job_urls) 
-        d = self.dump(q, rec)
-        if rec: return d
+        if not rec:
+            self.dump(q, rec)
+
 
     def _clean_pool(self):
         for idx, word in enumerate(self.pool[:-1]):
