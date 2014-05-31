@@ -236,22 +236,22 @@ class Extract(Search):
         except urllib2.URLError:
             print "Bad url, skipping to next url."
             self.continue_dump(rec = True)
-            self.count += 1
+            self.count -= 1
             return self._safety_net()
         except socket.timeout:
             print "Connection timed out, skipping to next url."
             self.continue_dump(rec = True)
-            self.count += 1
+            self.count -= 1
             return self._safety_net()
         except ssl.SSLError:
             print "SSL error, skipping site."
             self.continue_dump(rec = True)
-            self.count += 1
+            self.count -= 1
             return self._safety_net()
         except:
             print "Probably some other SSL error."
             self.continue_dump(rec = True)
-            self.count += 1
+            self.count -= 1
             return self._safety_net()
     # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
     def _pool_data(self, data):
