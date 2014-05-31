@@ -16,7 +16,7 @@ class Search(object):
     """
     # pass "e" for exact search or "ne" for inexact search. 
     #                          # default because num results probably low ...and it's funny?
-    def __init__(self, terms=("data+scientist","e"), loc="Austin%2C+TX", num_res=100, pages=1):
+    def __init__(self, terms=("data scientist","e"), loc="Austin, TX", num_res=100, pages=1):
         #url-ready form of search term
         self.search_term = ""
         self.e_ne = ""
@@ -39,11 +39,8 @@ class Search(object):
         self.count = None
 
         # format search term for url
-        if "+" in terms[0]:
-            self.search_term = terms[0].lower()
-        else:
-            term = terms[0].replace(" ", "+")
-            self.search_term = term.lower()
+        term = terms[0].replace(" ", "+")
+        self.search_term = term.lower()
 
         # format location in url
         self.city, self.state, self.loc = format_location(loc)
@@ -179,7 +176,7 @@ class Extract(Search):
     """
     """
     # will need an ability to load
-    def __init__(self, terms=("data+scientist", "e"), loc="Austin%2C+TX", num_res=100, pages=1, sleep=(1,2)):
+    def __init__(self, terms=("data scientist", "e"), loc="Austin, TX", num_res=100, pages=1, sleep=(1,2)):
         # avoid unnecessary work when there is no new search to be created: no location provided as in __add__ below
         if len(loc) > 0:
             Search.__init__(self, terms, loc, num_res, pages)
@@ -230,12 +227,9 @@ class Extract(Search):
         return "<term=%s,e_ne=%s,loc=%s>" %(self.search_term,self.e_ne,self.printable_loc) 
 
     # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
-    def _pool_data(self, data, q):
-        if len(data) > 5:
-            print self.count
-            self.pool += [word for sent in data for word in sent]
-            self.backup_pool = self.pool[:]
-            time.sleep(self.sleep_f()) 
+    
+    def _pool_next_step(self):
+
         try:
             data = self.raw_employer_data()
             return data
@@ -243,28 +237,40 @@ class Extract(Search):
             print "\nStopped."
         except urllib2.URLError:
             print "Bad url, skipping to next url."
-            return self.continue_dump(q, rec = True)
+            self.continue_dump(q, rec = True)
+            self._pool_next_step()
         except socket.timeout:
             print "Connection timed out, skipping to next url."
-            return self.continue_dump(q, rec = True)
+            self.continue_dump(q, rec = True)
+            self._pool_next_step()
+
         except ssl.SSLError:
             print "SSL error, skipping site."
-            return self.continue_dump(q, rec = True)
+            self.continue_dump(q, rec = True)
+            self._pool_next_step()
         except:
             print "Probably some other SSL error."
-            return self.continue_dump(q, rec = True)
+            self.continue_dump(q, rec = True)
+            self._pool_next_step()
+
+    def _pool_data(self, data, q):
+        if len(data) > 5:
+            print self.count
+            self.pool += [word for sent in data for word in sent]
+            self.backup_pool = self.pool[:]
+            time.sleep(self.sleep_f()) 
+        return self._pool_next_step()
+
     # may want to print self.count for each iteration while testing.
-    def dump(self, q='all',rec=False):
+    def dump(self, q='all'):
         if q is 'all':
             # huge dump into the pool 
             data = self.raw_employer_data()
-            if rec: return data
             while data is not None:
                 # might want to include options for identifying information on data by data basis, might need a dict with {indeed url : cleaned html}
                 data = self._pool_data(data, q)
         elif isinstance(q,int):
             data = self.raw_employer_data()
-            if rec: return data
             while self.count < q and data is not None:
                 data = self._pool_data(data, q)
         self._clean_pool()
@@ -272,8 +278,9 @@ class Extract(Search):
     def continue_dump(self, q="all", rec=False):
         self.job_urls = self.backup_job_urls[self.count+1:]
         self.job_htmls = (get_html(url) for url in self.job_urls) 
-        d = self.dump(q, rec)
-        if rec: return d
+        if not rec:
+            self.dump(q)
+
 
     def _clean_pool(self):
         for idx, word in enumerate(self.pool[:-1]):
