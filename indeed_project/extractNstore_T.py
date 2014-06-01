@@ -1,7 +1,7 @@
 from data_collector.models import Search,Location,Links,Results
 from django.utils import timezone
 
-import os, sys
+import os, sys, threading
 Distance_to_root = "../"
 #include access to root programs
 sys.path.insert(1, os.path.join(sys.path[0], Distance_to_root))
@@ -24,16 +24,7 @@ def file_grabber(f):
     except:
         print "Failed to open %s file" %f
 
-
-
-# Little robot to extract all the data from indeed and store it in a database set up in the django file
-# First function to be able to search according to a variation on location, holding the search term constant
-# This will allow to see what trends cluster around a particular job across the locations in a certain time window
-# Future functions should allow for the complementary case, vary search terms within a location to see spread of terms across jobs 
-# and see how they cluster
-# Of course, can run different search terms held while varying location around each term to get a macroscopic spread that combines the two.
-
-# will need to have it check recently gathered data or write a report for user to keep track of, don't want duplicated data in db
+# threaded version of extraction robot, should queue instead of group.
 class Extraction_Robot(object):
     def __init__(self, terms = file_grabber("job_titles.txt"), e_ne = "e", locs=file_grabber("locations.txt"), pos=True, with_filter=True, lower=True, with_bigrams=False):
         self.terms = terms
@@ -46,16 +37,25 @@ class Extraction_Robot(object):
         # will hold each Extract object to manipulate and store in db
         self.data = []
 
-# hold search-terms constant, vary locations
-    def vary_by_locations(self):
-         
-        while not isinstance(self.terms,basestring):
+# hold search-terms constant, vary locations: TODO:: group the locations and feed partially, save to db as locations group is finished
+# might be better to set up a queue and keep n constantly in process instead of waiting for groups to finish
+    def vary_by_locations(self,n=3):
+        if not isinstance(self.terms,basestring):
+            while len(self.terms) != 1:
                 term = raw_input("Too many search terms found, supply one search term to hold: ")
-                self.terms = term
+                self.terms = (term.strip()+" ").split(" ")[:-1]
+            self.terms = self.terms[0]
+        # n is number of threads per group
         # options: lowers, with_filter
         queries = [indeed.Extract(terms=(self.terms,self.e_ne),loc=l,pages=5) for l in self.locs]
-        for q in queries:
-            q.dump()
+        threads = [threading.Thread(target=q) for q in queries]
+        grouped_threads = list(group(threads,n))
+        for g in grouped_threads:
+            # start threads, wait till finished, store in database, continue
+            for t in g:
+                t.start()
+            for t in g:
+                t.join()
         self.data = queries    
         self.save_to_db(const="search_term")
         print encouragement.get_encouragement()
@@ -86,7 +86,6 @@ class Extraction_Robot(object):
                     for tup in data:
                         w = str(tup[0])
                         c = tup[1]
-                        p = ""
                         try:
                             p = str(tup[2])
                         except IndexError:
@@ -109,4 +108,5 @@ class Extraction_Robot(object):
 # Allow to be run as a script from terminal, would be neat to allow itself to initiate an extraction during a time window and then send
 # a report of the results further down the road. 
 #
+
 
