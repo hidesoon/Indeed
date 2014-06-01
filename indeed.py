@@ -36,8 +36,6 @@ class Search(object):
         self.job_urls = set([])
         # Html files of the job postings
         self.job_htmls = []
-        # counter for times next is called on generator
-        self.count = None
 
         # format search term for url
         term = terms[0].replace(" ", "+")
@@ -99,11 +97,8 @@ class Search(object):
 
     # if you just want the raw html file from the search results
     def next(self):
-        if self.count is None:
-            self.count = 1
         try:
             data = self.job_htmls.next()
-            self.count += 1
             return data
         except StopIteration:
             return None
@@ -202,7 +197,9 @@ class Extract(Search):
         # word: wordCount
         self.wcd = {}
         self.rec_break_counter = 5
-        self.summary_header_bool = (False, False)
+        self.summary_header_bool = (False, False)       
+         # counter for times next is called on generator
+        self.count = 0
    
     def __call__(self):
         self.dump()
@@ -230,7 +227,7 @@ class Extract(Search):
     # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
 
     # get the next piece of data using a safety net
-    def _get_data(self):
+    def _get_data(self,q="all"):
         try:
             data = self.raw_employer_data()
             return data
@@ -242,35 +239,38 @@ class Extract(Search):
                 return None
             else:
                 print "Doom in %s" %self.rec_break_counter
-                self.continue_dump(rec=True)
+                self.continue_dump(q,rec=True)
                 self.rec_break_counter -= 1
                 return self._get_data()
 
     def _pool_data(self, data):
         if len(data) > 5:
-            print self.count
             self.pool += [word for sent in data for word in sent]
             self.backup_pool = self.pool[:]
             time.sleep(self.sleep_f()) 
 
     # may want to print self.count for each iteration while testing.
-    def dump(self, q='all',rec=False):
+    def dump(self, q='all'):
         if q is 'all':
-            print "Starting dump for '%s' in %s \n" %(self.terms[0].lower(),self.printable_loc)
-            print "Expecting: %s" %len(self.job_urls)
+            print "Starting dump for '%s' in %s. Expecting: %s \n" %(self.terms[0].lower(),self.printable_loc,len(self.job_urls))
             # huge dump into the pool 
             data = self._get_data()
             while data is not None:
+                print self.count
                 self.rec_break_counter = 5
+                self.count += 1
                 self._pool_data(data)
                 # might want to include options for identifying information on data by data basis, might need a dict with {indeed url : cleaned html}
                 data = self._get_data()
         elif isinstance(q,int):
             data = self._get_data()
             while self.count < q and data is not None:
+                print self.count
                 self.rec_break_counter = 5
+                self.count += 1
                 self._pool_data(data)
-                data = self._get_data()
+                data = self._get_data(q)
+        print self.count
         self._clean_pool()
         print "All done extracting data: '%s' from %s" %(self.terms[0].lower(),self.printable_loc)
 
@@ -278,7 +278,7 @@ class Extract(Search):
         self.job_urls = self.backup_job_urls[self.count+1:]
         self.job_htmls = (get_html(url) for url in self.job_urls) 
         if not rec:
-            self.dump()
+            self.dump(q)
 
     def _clean_pool(self):
         for idx, word in enumerate(self.pool[:-1]):
