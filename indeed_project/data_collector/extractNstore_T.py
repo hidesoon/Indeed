@@ -1,4 +1,4 @@
-from data_collector.models import Search,Location,Links,Results
+from models import Search,Location,Links,Results
 from django.utils import timezone
 
 import os, sys, threading
