@@ -61,6 +61,7 @@ class Search(object):
             self.html_files = [urllib2.urlopen(url).read() for url in self.urls]  
             # list of all indeed job url redirects
             self.job_urls = list(set(self._identify_job_urls()))
+            random.shuffle(self.job_urls)
             self.backup_job_urls = self.job_urls[:]
             # generator for job htmls, to access need to self.job_htmls.next(), nlp clean, process, etc
             self.job_htmls = (get_html(url) for url in self.job_urls)            
