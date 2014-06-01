@@ -40,11 +40,9 @@ class Extraction_Robot(object):
 # hold search-terms constant, vary locations: TODO:: group the locations and feed partially, save to db as locations group is finished
 # might be better to set up a queue and keep n constantly in process instead of waiting for groups to finish
     def vary_by_locations(self,n=3):
-        if not isinstance(self.terms,basestring):
-            while len(self.terms) != 1:
+        while not isinstance(self.terms,basestring):
                 term = raw_input("Too many search terms found, supply one search term to hold: ")
-                self.terms = (term.strip()+" ").split(" ")[:-1]
-            self.terms = self.terms[0]
+                self.terms = term
         # n is number of threads per group
         # options: lowers, with_filter
         queries = [indeed.Extract(terms=(self.terms,self.e_ne),loc=l,pages=5) for l in self.locs]
@@ -65,7 +63,7 @@ class Extraction_Robot(object):
         
         if const is "search_term":
             s_db = Search(date=timezone.now(),term=self.data[0].search_term)
-            print s_db
+            print "Adding %s data into db."% s_db
             s_db.save()
             for q in self.data:
                 print q
