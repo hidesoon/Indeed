@@ -48,16 +48,14 @@ class Extraction_Robot(object):
 
 # hold search-terms constant, vary locations
     def vary_by_locations(self):
-        if not isinstance(self.terms,basestring):
-            while len(self.terms) != 1:
+         
+        while not isinstance(self.terms,basestring):
                 term = raw_input("Too many search terms found, supply one search term to hold: ")
-                self.terms = (term.strip()+" ").split(" ")[:-1]
-            self.terms = self.terms[0]
+                self.terms = term
         # options: lowers, with_filter
         queries = [indeed.Extract(terms=(self.terms,self.e_ne),loc=l,pages=5) for l in self.locs]
         for q in queries:
             q.dump()
-
         self.data = queries    
         self.save_to_db(const="search_term")
         print encouragement.get_encouragement()
