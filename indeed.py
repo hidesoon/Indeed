@@ -237,7 +237,6 @@ class Extract(Search):
             print "\nStopped."
         except urllib2.URLError:
             print "Bad url, skipping to next url."
-<<<<<<< HEAD
             self.continue_dump(rec=True)
             return self._safety_net()
         except socket.timeout:
@@ -251,25 +250,6 @@ class Extract(Search):
         except:
             print "Probably some other SSL error."
             self.continue_dump(rec=True)
-=======
-            self.continue_dump(rec = True)
-            self.count -= 1
-            return self._safety_net()
-        except socket.timeout:
-            print "Connection timed out, skipping to next url."
-            self.continue_dump(rec = True)
-            self.count -= 1
-            return self._safety_net()
-        except ssl.SSLError:
-            print "SSL error, skipping site."
-            self.continue_dump(rec = True)
-            self.count -= 1
-            return self._safety_net()
-        except:
-            print "Probably some other SSL error."
-            self.continue_dump(rec = True)
-            self.count -= 1
->>>>>>> 3f467b6daa6e6cea75db6e06e6fe8ed4d74b1eac
             return self._safety_net()
 
     def _pool_data(self, data):
@@ -282,6 +262,7 @@ class Extract(Search):
     # may want to print self.count for each iteration while testing.
     def dump(self, q='all',rec=False):
         if q is 'all':
+            print "Starting dump for %s in %s" %(self.terms[0],self.printable_loc)
             # huge dump into the pool 
             data = self._safety_net()
             while data is not None:
