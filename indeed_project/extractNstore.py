@@ -1,7 +1,7 @@
 from data_collector.models import Search,Location,Links,Results
 from django.utils import timezone
 
-import os, sys, threading
+import os, sys
 Distance_to_root = "../"
 #include access to root programs
 sys.path.insert(1, os.path.join(sys.path[0], Distance_to_root))
@@ -46,25 +46,18 @@ class Extraction_Robot(object):
         # will hold each Extract object to manipulate and store in db
         self.data = []
 
-# hold search-terms constant, vary locations: TODO:: group the locations and feed partially, save to db as locations group is finished
-# might be better to set up a queue and keep n constantly in process instead of waiting for groups to finish
-    def vary_by_locations(self,n=3):
+# hold search-terms constant, vary locations
+    def vary_by_locations(self):
         if not isinstance(self.terms,basestring):
             while len(self.terms) != 1:
                 term = raw_input("Too many search terms found, supply one search term to hold: ")
                 self.terms = (term.strip()+" ").split(" ")[:-1]
             self.terms = self.terms[0]
-        # n is number of threads per group
         # options: lowers, with_filter
         queries = [indeed.Extract(terms=(self.terms,self.e_ne),loc=l,pages=5) for l in self.locs]
-        threads = [threading.Thread(target=q) for q in queries]
-        grouped_threads = list(group(threads,n))
-        for g in grouped_threads:
-            # start threads, wait till finished, store in database, continue
-            for t in g:
-                t.start()
-            for t in g:
-                t.join()
+        for q in queries:
+            q.dump()
+
         self.data = queries    
         self.save_to_db(const="search_term")
         print encouragement.get_encouragement()

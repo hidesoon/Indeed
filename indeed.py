@@ -18,6 +18,7 @@ class Search(object):
     #                          # default because num results probably low ...and it's funny?
     def __init__(self, terms=("data scientist","e"), loc="Austin, TX", num_res=100, pages=1):
         #url-ready form of search term
+        self.terms = terms
         self.search_term = ""
         self.e_ne = ""
         # url-ready form of location
@@ -201,7 +202,6 @@ class Extract(Search):
         self.wcd = {}
         self.summary_header_bool = (False, False)
    
-    # allow for threading
     def __call__(self):
         print  self.printable_loc+'\n'
         self.dump()
@@ -226,6 +226,8 @@ class Extract(Search):
     def __repr__(self):
         return "<term=%s,e_ne=%s,loc=%s>" %(self.search_term,self.e_ne,self.printable_loc) 
 
+    # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
+
     # get the next piece of data using a safety net
     def _safety_net(self):
         try:
@@ -235,25 +237,21 @@ class Extract(Search):
             print "\nStopped."
         except urllib2.URLError:
             print "Bad url, skipping to next url."
-            self.continue_dump(rec = True)
-            self.count += 1
+            self.continue_dump(rec=True)
             return self._safety_net()
         except socket.timeout:
             print "Connection timed out, skipping to next url."
-            self.continue_dump(rec = True)
-            self.count += 1
+            self.continue_dump(rec=True)
             return self._safety_net()
         except ssl.SSLError:
             print "SSL error, skipping site."
-            self.continue_dump(rec = True)
-            self.count += 1
+            self.continue_dump(rec=True)
             return self._safety_net()
         except:
             print "Probably some other SSL error."
-            self.continue_dump(rec = True)
-            self.count += 1
+            self.continue_dump(rec=True)
             return self._safety_net()
-    # dump functions: if something goes wrong, do self.continue_dump(q) and keep going 
+
     def _pool_data(self, data):
         if len(data) > 5:
             print self.count
@@ -266,7 +264,6 @@ class Extract(Search):
         if q is 'all':
             # huge dump into the pool 
             data = self._safety_net()
-            
             while data is not None:
                 self._pool_data(data)
                 # might want to include options for identifying information on data by data basis, might need a dict with {indeed url : cleaned html}
@@ -277,13 +274,13 @@ class Extract(Search):
                 self._pool_data(data)
                 data = self._safety_net()
         self._clean_pool()
+        print "All done extracting data: %s from %s" %(self.terms[0],self.printable_loc)
 
     def continue_dump(self, q="all", rec=False):
         self.job_urls = self.backup_job_urls[self.count+1:]
         self.job_htmls = (get_html(url) for url in self.job_urls) 
         if not rec:
             self.dump(q, rec)
-
 
     def _clean_pool(self):
         for idx, word in enumerate(self.pool[:-1]):
