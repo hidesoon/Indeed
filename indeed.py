@@ -6,7 +6,7 @@ try:
 except ImportError:
      print "Sorry, I need nltk to work at the moment. "
 #Native
-import urllib2, re, collections, math, random, time, socket, ssl
+import urllib2, re, collections, math, random, time
 #Here
 import stopwords
 
