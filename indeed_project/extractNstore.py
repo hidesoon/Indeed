@@ -86,9 +86,10 @@ class Extraction_Robot(object):
                     for tup in data:
                         w = str(tup[0])
                         c = tup[1]
+                        p = ""
                         try:
                             p = str(tup[2])
-                        except:
+                        except IndexError:
                             p = ""
                         r_db = Results(search=s_db,location=loc_db,word=w,count=c,pos=p,is_bigram=self.with_bigrams)
                         r_db.save()
