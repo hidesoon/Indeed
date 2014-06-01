@@ -256,21 +256,20 @@ class Extract(Search):
             # huge dump into the pool 
             data = self._get_data()
             while data is not None:
-                print self.count
                 self.rec_break_counter = 5
                 self.count += 1
+                print self.count
                 self._pool_data(data)
                 # might want to include options for identifying information on data by data basis, might need a dict with {indeed url : cleaned html}
                 data = self._get_data()
         elif isinstance(q,int):
             data = self._get_data()
             while self.count < q and data is not None:
-                print self.count
                 self.rec_break_counter = 5
                 self.count += 1
+                print self.count
                 self._pool_data(data)
                 data = self._get_data(q)
-        print self.count
         self._clean_pool()
         print "All done extracting data: '%s' from %s" %(self.terms[0].lower(),self.printable_loc)
 
