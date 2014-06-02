@@ -256,7 +256,9 @@ class Extract(Search):
             # huge dump into the pool 
             data = self._get_data()
             while data is not None:
-                self.rec_break_counter = 5
+                if self.rec_break_counter < 5:
+                    self.rec_break_counter = 5
+                    print "Nevermind, resetting doom countdown."
                 self.count += 1
                 print self.count
                 self._pool_data(data)
@@ -265,7 +267,9 @@ class Extract(Search):
         elif isinstance(q,int):
             data = self._get_data()
             while self.count < q and data is not None:
-                self.rec_break_counter = 5
+                if self.rec_break_counter < 5:
+                    self.rec_break_counter = 5
+                    print "Nevermind, resetting doom countdown."
                 self.count += 1
                 print self.count
                 self._pool_data(data)

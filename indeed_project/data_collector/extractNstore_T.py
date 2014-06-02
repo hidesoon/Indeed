@@ -45,7 +45,10 @@ class Extraction_Robot(object):
                 self.terms = term
         # n is number of threads per group
         # options: lowers, with_filter
-        queries = [indeed.Extract(terms=(self.terms,self.e_ne),loc=l,pages=5) for l in self.locs]
+        queries = [indeed.Extract(terms=(self.terms,self.e_ne), loc=l, pages=5) for l in self.locs]
+        # ensure that groups are about equal in size
+        queries = sorted(queries, key=lambda i: len(i.job_urls), reverse=True)
+
         threads = [threading.Thread(target=q) for q in queries]
         grouped_threads = list(group(threads,n))
         for g in grouped_threads:
