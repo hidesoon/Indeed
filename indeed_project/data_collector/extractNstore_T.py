@@ -24,7 +24,6 @@ def file_grabber(f):
     except:
         print "Failed to open %s file" %f
 
-# threaded version of extraction robot, should queue instead of group.
 class Extraction_Robot(object):
     def __init__(self, terms = file_grabber("job_titles.txt"), e_ne = "e", locs=file_grabber("locations.txt"), pos=True, with_filter=True, lower=True, with_bigrams=False):
         self.terms = terms
@@ -37,7 +36,7 @@ class Extraction_Robot(object):
         # will hold each Extract object to manipulate and store in db
         self.data = []
 
-# hold search-terms constant, vary locations: TODO:: group the locations and feed partially, save to db as locations group is finished
+# hold search-terms constant, vary locations
 # might be better to set up a queue and keep n constantly in process instead of waiting for groups to finish
     def vary_by_locations(self,n=3):
         while not isinstance(self.terms,basestring):
@@ -46,13 +45,13 @@ class Extraction_Robot(object):
         # n is number of threads per group
         # options: lowers, with_filter
         queries = [indeed.Extract(terms=(self.terms,self.e_ne), loc=l, pages=5) for l in self.locs]
-        # ensure that groups are about equal in size
+        # ensure that groups are about equal in size -> ensures optimalish meshing of threads
         queries = sorted(queries, key=lambda i: len(i.job_urls), reverse=True)
 
         threads = [threading.Thread(target=q) for q in queries]
         grouped_threads = list(group(threads,n))
         for g in grouped_threads:
-            # start threads, wait till finished, store in database, continue
+            # start threads, wait till finished, continue
             for t in g:
                 t.start()
             for t in g:
@@ -60,6 +59,7 @@ class Extraction_Robot(object):
         self.data = queries    
         self.save_to_db(const="search_term")
         print encouragement.get_encouragement()
+        self.clear()
 
     def save_to_db(self,const):
         # store in db, uses self.data Extract objects, iterate through and generate the appropriate injections for the db
@@ -104,10 +104,7 @@ class Extraction_Robot(object):
         self.data = []
 
 
-######
-#
-# Allow to be run as a script from terminal, would be neat to allow itself to initiate an extraction during a time window and then send
-# a report of the results further down the road. 
-#
+
+
 
 
