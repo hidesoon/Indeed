@@ -279,6 +279,7 @@ class Extract(Search):
 
     def continue_dump(self, q="all", rec=False):
         self.job_urls = self.backup_job_urls[self.count+1:]
+        random.shuffle(self.job_urls)
         self.job_htmls = (get_html(url) for url in self.job_urls) 
         if not rec:
             self.dump(q)

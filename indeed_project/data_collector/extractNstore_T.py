@@ -59,6 +59,7 @@ class Extraction_Robot(object):
         self.data = queries    
         self.save_to_db(const="search_term")
         print encouragement.get_encouragement()
+        #paranoia
         self.clear()
 
     def save_to_db(self,const):
