@@ -1,13 +1,13 @@
 This project is currently under development, feel free to poke around and use what there is though.
 
-Here's a general path for the (ok, any data-centric) project if you're an optimist. (Currently we're at the second bubble.)
+Here's a general path for the project if you're an optimist. (Currently we're at the second bubble.)
 ![alt tag](Path.png)
 
 
 
 
 
-The indeed.py file provides a class for extracting all job postings for a search term, cleaning the data and giving a basic summary of the results, (takes care of the first bubble above). It'll give the word:wordCount, with options to: make the words into bigrams, add the part of speech per word, find the local frequencies of the words and adjust the data according to a few filters. There is a suggested database architecture in the indeed_project directory along with a little helper robot to extract and store all the data into the database. 
+indeed.py provides a class for extracting all job postings for a search term, cleaning the data and giving a basic summary of the results, (takes care of the first bubble above). It'll give the word:wordCount, with options to: make the words into bigrams, add the part of speech per word, find the local frequencies of the words and adjust the data according to a few filters. There is a suggested database architecture in the indeed_project directory along with a little helper robot to extract and store all the data into the database. 
 
 Specifics on the indeed.py program:
 
