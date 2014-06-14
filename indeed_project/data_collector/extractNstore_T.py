@@ -10,19 +10,20 @@ import indeed, encouragement
 
 # generator for grouping n tuples in list, will collect all possible
 def group(lst, n):
-  for i in range(0, len(lst), n):
-    val = lst[i:i+n]
-    yield tuple(val)
+    for i in range(0, len(lst), n):
+        val = lst[i:i+n]
+        yield tuple(val)
           
 def file_grabber(f):
     try:
         f = open(Distance_to_root+f)
         f_s = f.read().strip()
         f_s = [i.strip() for i in f_s.split('\n')]
-        f.close()
         return f_s
     except:
         print "Failed to open %s file" %f
+    finally:
+        f.close()
 
 class Extraction_Robot(object):
     def __init__(self, terms = file_grabber("job_titles.txt"), e_ne = "e", locs=file_grabber("locations.txt"), pos=True, with_filter=True, lower=True, with_bigrams=False):
@@ -30,7 +31,7 @@ class Extraction_Robot(object):
         self.e_ne = e_ne
         self.locs = locs
         self.pos = pos
-        self.with_filter=with_filter
+        self.with_filter = with_filter
         self.lower = lower
         self.with_bigrams = with_bigrams
         # will hold each Extract object to manipulate and store in db
