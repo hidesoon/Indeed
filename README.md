@@ -1,7 +1,7 @@
 This project is currently under development, feel free to poke around and use what there is though.
 
 
-The indeed.py program provides a class for extracting all job postings for a search term, cleaning the data and giving a basic summary of the results. It'll give the word:wordCount, with options to: make the words into bigrams, add the part of speech per word, find the local frequencies of the words and adjust the data according to a few filters. There is a suggested database architecture in the indeed_project directory along with a little helper robot to extract and store all the data into the database. 
+The indeed.py program provides a class for extracting all job postings for a search term, cleaning the data and giving a basic summary of the results. It'll give the word:wordCount, with options to: make the words into bigrams, add the part of speech per word, find the local frequencies of the words and adjust the data according to a few filters. There is a basic database architecture in the indeed_project Django root directory along with a little helper robot to extract and store all the data. 
 
 Specifics on the indeed.py program:
 
@@ -116,5 +116,4 @@ Automating the search, Extract and get the data in a good format for storage/ana
 	p.identify_NNP(counts=True) # includes counts in tuple in list
  
 
-	# Database interface in indeed_project/
-	#
+
