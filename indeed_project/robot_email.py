@@ -1,4 +1,5 @@
 #add ability to send an email when the extraction is done from separate computer
+# must be from a gmail account!!
 
 import smtplib
 
